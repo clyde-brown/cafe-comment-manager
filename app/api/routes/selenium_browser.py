@@ -26,11 +26,19 @@ def run_chrome_selenium():
 
     # 추가 유용한 옵션들
     chrome_options.add_argument("--start-maximized")  # 창 최대화
+    chrome_options.add_argument("--no-sandbox")  # 샌드박스 비활성화 (안정성 향상)
+    chrome_options.add_argument("--disable-dev-shm-usage")  # /dev/shm 사용 비활성화
+    chrome_options.add_argument("--disable-gpu")  # GPU 사용 비활성화 (안정성)
+    chrome_options.add_argument("--remote-debugging-port=9222")  # 디버깅 포트 설정
     chrome_options.add_argument(
         "--disable-blink-features=AutomationControlled"
     )  # 자동화 탐지 방지
     chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
     chrome_options.add_experimental_option("useAutomationExtension", False)
+    chrome_options.add_experimental_option("detach", True)  # 프로세스 분리
+
+    driver = None
+    page_title = None
 
     try:
         # ChromeDriver 초기화 (시스템에 설치된 ChromeDriver 사용)
@@ -47,21 +55,18 @@ def run_chrome_selenium():
         driver.get("https://www.google.com")
         print("구글 홈페이지에 접속했습니다!")
 
-        # 페이지 제목 출력
-        print(f"페이지 제목: {driver.title}")
+        # 페이지 제목을 미리 저장 (브라우저가 살아있을 때)
+        page_title = driver.title
+        print(f"페이지 제목: {page_title}")
 
         # 10초 대기 (브라우저 확인용)
         print("10초 후 브라우저가 자동으로 닫힙니다...")
         time.sleep(10)
 
-        # 브라우저 종료
-        driver.quit()
-        print("브라우저가 종료되었습니다.")
-
         return {
             "success": True,
             "message": "브라우저가 성공적으로 실행되었습니다.",
-            "page_title": driver.title if "driver" in locals() else None,
+            "page_title": page_title,
         }
 
     except Exception as e:
@@ -71,6 +76,15 @@ def run_chrome_selenium():
             "message": f"브라우저 실행 중 오류가 발생했습니다: {str(e)}",
             "error": str(e),
         }
+
+    finally:
+        # 브라우저가 존재하고 세션이 활성화되어 있을 때만 종료
+        if driver:
+            try:
+                driver.quit()
+                print("브라우저가 종료되었습니다.")
+            except Exception as quit_error:
+                print(f"브라우저 종료 중 오류 (무시됨): {quit_error}")
 
 
 @router.post("/open-google")
@@ -160,11 +174,21 @@ async def open_custom_url(url: str = "https://www.google.com", duration: int = 1
             chrome_options = Options()
             chrome_options.add_argument("--incognito")
             chrome_options.add_argument("--start-maximized")
+            chrome_options.add_argument("--no-sandbox")
+            chrome_options.add_argument("--disable-dev-shm-usage")
+            chrome_options.add_argument("--disable-gpu")
+            chrome_options.add_argument(
+                "--remote-debugging-port=9223"
+            )  # 다른 포트 사용
             chrome_options.add_argument("--disable-blink-features=AutomationControlled")
             chrome_options.add_experimental_option(
                 "excludeSwitches", ["enable-automation"]
             )
             chrome_options.add_experimental_option("useAutomationExtension", False)
+            chrome_options.add_experimental_option("detach", True)
+
+            driver = None
+            page_title = None
 
             try:
                 driver = webdriver.Chrome(options=chrome_options)
@@ -178,7 +202,6 @@ async def open_custom_url(url: str = "https://www.google.com", duration: int = 1
                 print(f"페이지 제목: {page_title}")
 
                 time.sleep(duration)
-                driver.quit()
 
                 return {
                     "success": True,
@@ -189,6 +212,15 @@ async def open_custom_url(url: str = "https://www.google.com", duration: int = 1
 
             except Exception as e:
                 return {"success": False, "error": str(e)}
+
+            finally:
+                # 브라우저가 존재할 때만 종료
+                if driver:
+                    try:
+                        driver.quit()
+                        print("사용자 지정 브라우저가 종료되었습니다.")
+                    except Exception as quit_error:
+                        print(f"브라우저 종료 중 오류 (무시됨): {quit_error}")
 
         loop = asyncio.get_event_loop()
         result = await loop.run_in_executor(None, run_custom_browser)
