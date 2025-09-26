@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .upload-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .upload-area, .browser-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 20px 0;
+            background: #f8f9ff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .browser-area {
+            border-color: #28a745;
+            background: #f8fff8;
+        }
+        
+        .browser-area:hover {
+            border-color: #20c997;
+            background: #f0fff0;
+        }
+        
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+        
+        .upload-area.dragover {
+            border-color: #764ba2;
+            background: #e8ebff;
+            transform: scale(1.02);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        
+        .upload-subtext {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result-section {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .result-header {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .result-header h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .file-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .info-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .info-card .label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .info-card .value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .data-table {
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        tr:hover {
+            background: #f8f9ff;
+        }
+        
+        .error {
+            background: #ffe6e6;
+            color: #d63031;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #d63031;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .upload-area {
+                padding: 30px 20px;
+            }
+            
+            .file-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 엑셀 데이터 뷰어</h1>
+            <p>엑셀 파일을 업로드하고 데이터를 확인해보세요</p>
+        </div>
+        
+        <div class="content">
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">엑셀 파일을 선택하거나 드래그해서 업로드하세요</div>
+                    <div class="upload-subtext">지원 형식: .xlsx, .xls (최대 50MB)</div>
+                    <button class="upload-btn" type="button">파일 선택</button>
+                </div>
+                <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls" onchange="handleFileSelect(event)">
+                
+                <div class="browser-section" style="margin: 30px 0; text-align: center;">
+                    <div class="browser-area">
+                        <div class="upload-icon">🌐</div>
+                        <div class="upload-text">구글 브라우저 열기</div>
+                        <div class="upload-subtext">Selenium을 통해 시크릿 모드로 구글을 열어보세요 (10초 후 자동 종료)</div>
+                        <button class="upload-btn" type="button" onclick="openGoogleBrowser()" id="browserBtn">
+                            구글 브라우저 열기
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>파일을 처리하고 있습니다...</p>
+                </div>
+                
+                <div class="loading" id="browserLoading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>브라우저를 실행하고 있습니다...</p>
+                </div>
+            </div>
+            
+            <div class="result-section" id="resultSection">
+                <div class="result-header">
+                    <h3 id="fileName">파일명</h3>
+                    <div class="file-info" id="fileInfo">
+                        <!-- 파일 정보가 여기에 표시됩니다 -->
+                    </div>
+                </div>
+                
+                <div class="data-table">
+                    <table id="dataTable">
+                        <!-- 테이블 데이터가 여기에 표시됩니다 -->
+                    </table>
+                </div>
+            </div>
+            
+            <div class="error" id="errorMessage" style="display: none;">
+                <!-- 에러 메시지가 여기에 표시됩니다 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 드래그 앤 드롭 이벤트 핸들러
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, unhighlight, false);
+        });
+        
+        uploadArea.addEventListener('drop', handleDrop, false);
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        function highlight(e) {
+            uploadArea.classList.add('dragover');
+        }
+        
+        function unhighlight(e) {
+            uploadArea.classList.remove('dragover');
+        }
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        }
+        
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+        
+        async function handleFile(file) {
+            // 파일 형식 검증
+            if (!file.name.toLowerCase().match(/\.(xlsx|xls)$/)) {
+                showError('엑셀 파일만 업로드 가능합니다. (.xlsx, .xls)');
+                return;
+            }
+            
+            // 파일 크기 검증 (50MB)
+            if (file.size > 50 * 1024 * 1024) {
+                showError('파일 크기가 너무 큽니다. 최대 50MB까지 가능합니다.');
+                return;
+            }
+            
+            showLoading(true);
+            hideError();
+            hideResult();
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                const response = await fetch('/api/excel/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || '파일 업로드 중 오류가 발생했습니다.');
+                }
+                
+                const data = await response.json();
+                displayResult(data);
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                showError(error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        function displayResult(data) {
+            const resultSection = document.getElementById('resultSection');
+            const fileName = document.getElementById('fileName');
+            const fileInfo = document.getElementById('fileInfo');
+            const dataTable = document.getElementById('dataTable');
+            
+            // 파일명 표시
+            fileName.textContent = `📄 ${data.filename}`;
+            
+            // 파일 정보 표시
+            fileInfo.innerHTML = `
+                <div class="info-card">
+                    <div class="label">총 행 수</div>
+                    <div class="value">${data.statistics.total_rows.toLocaleString()}</div>
+                </div>
+                <div class="info-card">
+                    <div class="label">총 열 수</div>
+                    <div class="value">${data.statistics.total_columns}</div>
+                </div>
+                <div class="info-card">
+                    <div class="label">파일 크기</div>
+                    <div class="value">${(data.file_size / 1024).toFixed(1)} KB</div>
+                </div>
+                <div class="info-card">
+                    <div class="label">메모리 사용량</div>
+                    <div class="value">${(data.statistics.memory_usage / 1024).toFixed(1)} KB</div>
+                </div>
+            `;
+            
+            // 테이블 생성
+            if (data.preview && data.preview.length > 0) {
+                const headers = Object.keys(data.preview[0]);
+                
+                let tableHTML = '<thead><tr>';
+                headers.forEach(header => {
+                    tableHTML += `<th>${header}</th>`;
+                });
+                tableHTML += '</tr></thead><tbody>';
+                
+                data.preview.forEach(row => {
+                    tableHTML += '<tr>';
+                    headers.forEach(header => {
+                        const cellValue = row[header] || '';
+                        tableHTML += `<td>${cellValue}</td>`;
+                    });
+                    tableHTML += '</tr>';
+                });
+                
+                tableHTML += '</tbody>';
+                dataTable.innerHTML = tableHTML;
+            }
+            
+            resultSection.style.display = 'block';
+        }
+        
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+        
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+        
+        function hideResult() {
+            document.getElementById('resultSection').style.display = 'none';
+        }
+        
+        // 구글 브라우저 열기 함수
+        async function openGoogleBrowser() {
+            const browserBtn = document.getElementById('browserBtn');
+            const browserLoading = document.getElementById('browserLoading');
+            
+            try {
+                // 버튼 비활성화 및 로딩 표시
+                browserBtn.disabled = true;
+                browserBtn.textContent = '실행 중...';
+                browserLoading.style.display = 'block';
+                hideError();
+                
+                const response = await fetch('/api/browser/open-google', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || '브라우저 실행 중 오류가 발생했습니다.');
+                }
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // 성공 메시지 표시
+                    showBrowserSuccess('✅ ' + data.message);
+                    
+                    // 10초 후 버튼 재활성화
+                    setTimeout(() => {
+                        browserBtn.disabled = false;
+                        browserBtn.textContent = '구글 브라우저 열기';
+                    }, 11000); // 11초 후 (브라우저가 10초 후 닫히므로)
+                    
+                } else {
+                    throw new Error(data.details?.message || '브라우저 실행에 실패했습니다.');
+                }
+                
+            } catch (error) {
+                console.error('Browser open error:', error);
+                showError('🚫 ' + error.message);
+                
+                // 버튼 재활성화
+                browserBtn.disabled = false;
+                browserBtn.textContent = '구글 브라우저 열기';
+                
+            } finally {
+                browserLoading.style.display = 'none';
+            }
+        }
+        
+        function showBrowserSuccess(message) {
+            // 기존 에러 메시지 영역을 성공 메시지로 활용
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.style.background = '#e6ffe6';
+            errorDiv.style.color = '#28a745';
+            errorDiv.style.borderLeftColor = '#28a745';
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            
+            // 15초 후 자동으로 숨기기
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+                // 스타일을 원래대로 복원
+                errorDiv.style.background = '#ffe6e6';
+                errorDiv.style.color = '#d63031';
+                errorDiv.style.borderLeftColor = '#d63031';
+            }, 15000);
+        }
+    </script>
+</body>
+</html>
