@@ -1,0 +1,311 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+브라우저 제어 비즈니스 로직 서비스
+"""
+
+import logging
+import time
+from typing import Dict, Any, Optional
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
+from app.utils.browser_utils import (
+    create_chrome_options,
+    setup_automation_bypass,
+    safe_quit_driver,
+    save_screenshot,
+    validate_url,
+    create_safe_filename,
+)
+
+# 로깅 설정
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# 상수 정의
+DEFAULT_WAIT_TIMEOUT = 10
+NAVER_LOGIN_URL = "https://nid.naver.com/nidlogin.login"
+
+
+class BrowserController:
+    """브라우저 제어를 위한 클래스"""
+
+    def __init__(self, headless: bool = True, enable_images: bool = False):
+        self.headless = headless
+        self.enable_images = enable_images
+        self.driver: Optional[webdriver.Chrome] = None
+
+    def __enter__(self):
+        """컨텍스트 매니저 진입"""
+        self._initialize_driver()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """컨텍스트 매니저 종료"""
+        safe_quit_driver(self.driver)
+
+    def _initialize_driver(self) -> None:
+        """WebDriver 초기화"""
+        options = create_chrome_options(self.headless, self.enable_images)
+        self.driver = webdriver.Chrome(options=options)
+        setup_automation_bypass(self.driver)
+        logger.info(
+            f"Chrome 브라우저 초기화 완료 (헤드리스: {self.headless}, 이미지: {self.enable_images})"
+        )
+
+    def navigate_to(self, url: str) -> str:
+        """
+        지정된 URL로 이동
+
+        Args:
+            url: 이동할 URL
+
+        Returns:
+            str: 페이지 제목
+        """
+        if not self.driver:
+            raise RuntimeError("WebDriver가 초기화되지 않았습니다.")
+
+        self.driver.get(url)
+        title = self.driver.title
+        logger.info(f"페이지 이동 완료: {url} (제목: {title})")
+        return title
+
+    def wait_for_element(self, by: By, value: str, timeout: int = DEFAULT_WAIT_TIMEOUT):
+        """
+        요소가 나타날 때까지 대기
+
+        Args:
+            by: 요소 검색 방법
+            value: 요소 검색 값
+            timeout: 대기 시간 (초)
+
+        Returns:
+            WebElement: 찾은 요소
+        """
+        if not self.driver:
+            raise RuntimeError("WebDriver가 초기화되지 않았습니다.")
+
+        wait = WebDriverWait(self.driver, timeout)
+        return wait.until(EC.presence_of_element_located((by, value)))
+
+    def take_screenshot(self, filename: str, description: str = "") -> None:
+        """스크린샷 촬영"""
+        if self.driver:
+            save_screenshot(self.driver, filename, description)
+
+    def get_current_url(self) -> str:
+        """현재 URL 반환"""
+        if self.driver:
+            return self.driver.current_url
+        return ""
+
+    def get_page_title(self) -> str:
+        """현재 페이지 제목 반환"""
+        if self.driver:
+            return self.driver.title
+        return ""
+
+
+class BrowserService:
+    """브라우저 관련 비즈니스 로직을 처리하는 서비스 클래스"""
+
+    @staticmethod
+    def open_custom_url(url: str, duration: int = 10) -> Dict[str, Any]:
+        """
+        사용자 지정 URL을 여는 함수
+
+        Args:
+            url: 접속할 URL
+            duration: 브라우저를 열어둘 시간(초)
+
+        Returns:
+            Dict: 실행 결과
+        """
+        try:
+            # URL 검증
+            if not validate_url(url):
+                raise ValueError("유효하지 않은 URL입니다.")
+
+            with BrowserController(headless=True, enable_images=False) as browser:
+                # 사용자 지정 URL로 이동
+                title = browser.navigate_to(url)
+
+                # 스크린샷 촬영
+                time.sleep(1)
+                safe_filename = create_safe_filename(url)
+                browser.take_screenshot(
+                    f"screenshot_custom_1_{safe_filename}.png",
+                    f"사용자 지정 URL 접속: {url}",
+                )
+
+                # 지정된 시간만큼 대기
+                time.sleep(duration)
+
+                # 최종 스크린샷
+                browser.take_screenshot(
+                    f"screenshot_custom_2_final_{safe_filename}.png",
+                    f"최종 상태: {url}",
+                )
+
+                return {
+                    "success": True,
+                    "url": url,
+                    "page_title": title,
+                    "duration": duration,
+                }
+
+        except Exception as e:
+            logger.error(f"사용자 지정 URL 브라우저 실행 중 오류: {e}")
+            return {"success": False, "error": str(e)}
+
+    @staticmethod
+    def login_to_naver(
+        username: str = "yki2k", password: str = "zmfpdlwl94@"
+    ) -> Dict[str, Any]:
+        """
+        네이버 자동 로그인 함수
+
+        Args:
+            username: 네이버 아이디
+            password: 네이버 비밀번호
+
+        Returns:
+            Dict: 로그인 결과
+        """
+        login_success = False
+
+        try:
+            with BrowserController(
+                headless=False, enable_images=True
+            ) as browser:  # 캡차를 위해 이미지 활성화
+                # 네이버 로그인 페이지로 이동
+                title = browser.navigate_to(NAVER_LOGIN_URL)
+
+                # 스크린샷 1: 로그인 페이지
+                time.sleep(1)
+                browser.take_screenshot(
+                    "screenshot_naver_1_login_page.png", "네이버 로그인 페이지"
+                )
+
+                # 로그인 폼 요소 대기 및 입력
+                username_field = browser.wait_for_element(By.ID, "id")
+                username_field.clear()
+                username_field.send_keys(username)
+                logger.info("아이디 입력 완료")
+
+                # 스크린샷 2: 아이디 입력 후
+                time.sleep(1)
+                browser.take_screenshot(
+                    "screenshot_naver_2_id_input.png", "아이디 입력 완료"
+                )
+
+                # 패스워드 입력
+                password_field = browser.driver.find_element(By.ID, "pw")
+                password_field.clear()
+                password_field.send_keys(password)
+                logger.info("패스워드 입력 완료")
+
+                # 스크린샷 3: 패스워드 입력 후
+                time.sleep(1)
+                browser.take_screenshot(
+                    "screenshot_naver_3_password_input.png", "패스워드 입력 완료"
+                )
+
+                # 로그인 버튼 클릭
+                login_button = browser.driver.find_element(By.ID, "log.login")
+                login_button.click()
+                logger.info("로그인 버튼 클릭")
+
+                # 스크린샷 4: 로그인 버튼 클릭 후
+                time.sleep(2)
+                browser.take_screenshot(
+                    "screenshot_naver_4_login_clicked.png", "로그인 버튼 클릭 후"
+                )
+
+                # 로그인 처리 대기 및 캡차 확인
+                logger.info("로그인 처리 중... 캡차나 추가 인증 확인")
+                time.sleep(5)
+
+                # 캡차 감지
+                try:
+                    browser.driver.find_element(
+                        By.CSS_SELECTOR,
+                        "img[alt*='캡차'], img[src*='captcha'], .captcha_img img",
+                    )
+                    logger.warning(
+                        "⚠️  캡차 이미지가 감지되었습니다! 수동 입력이 필요할 수 있습니다."
+                    )
+                    logger.info("캡차 해결을 위해 30초 대기합니다...")
+                    time.sleep(30)
+                except:
+                    logger.info("캡차가 감지되지 않았습니다.")
+
+                # 로그인 성공 확인
+                try:
+                    wait = WebDriverWait(browser.driver, 15)
+                    wait.until(
+                        lambda driver: "naver.com" in driver.current_url
+                        and "nid.naver.com" not in driver.current_url
+                    )
+                    login_success = True
+                    title = browser.get_page_title()
+                    logger.info("네이버 로그인 성공!")
+
+                    # 성공 스크린샷
+                    time.sleep(2)
+                    browser.take_screenshot(
+                        "screenshot_naver_5_login_success.png", "로그인 성공"
+                    )
+
+                except Exception as login_error:
+                    logger.error(f"로그인 확인 중 오류: {login_error}")
+
+                    # 현재 상태 확인
+                    current_url = browser.get_current_url()
+                    logger.info(f"현재 URL: {current_url}")
+
+                    # 오류 메시지 확인
+                    try:
+                        error_msg = browser.driver.find_element(
+                            By.CSS_SELECTOR, ".error_msg, .alert_msg, .msg_error"
+                        )
+                        logger.info(f"오류 메시지: {error_msg.text}")
+                    except:
+                        logger.info("특별한 오류 메시지는 없습니다.")
+
+                    # 실패 스크린샷
+                    time.sleep(2)
+                    browser.take_screenshot(
+                        "screenshot_naver_5_login_failed_or_auth.png",
+                        "로그인 실패 또는 추가 인증 필요",
+                    )
+
+                # 최종 스크린샷
+                browser.take_screenshot(
+                    "screenshot_naver_6_final_state.png", "최종 상태"
+                )
+
+                return {
+                    "success": True,
+                    "message": (
+                        "네이버 로그인이 완료되었습니다."
+                        if login_success
+                        else "로그인을 시도했습니다. 추가 인증이 필요할 수 있습니다."
+                    ),
+                    "login_success": login_success,
+                    "page_title": title,
+                    "current_url": browser.get_current_url(),
+                }
+
+        except Exception as e:
+            logger.error(f"네이버 로그인 중 오류: {e}")
+            return {
+                "success": False,
+                "message": f"네이버 로그인 중 오류가 발생했습니다: {str(e)}",
+                "error": str(e),
+            }

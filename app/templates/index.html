@@ -53,7 +53,7 @@
             margin-bottom: 40px;
         }
         
-        .upload-area, .browser-area {
+        .upload-area, .naver-area {
             border: 3px dashed #667eea;
             border-radius: 15px;
             padding: 40px;
@@ -63,14 +63,14 @@
             cursor: pointer;
         }
         
-        .browser-area {
-            border-color: #28a745;
-            background: #f8fff8;
+        .naver-area {
+            border-color: #03c75a;
+            background: #f0fff4;
         }
         
-        .browser-area:hover {
-            border-color: #20c997;
-            background: #f0fff0;
+        .naver-area:hover {
+            border-color: #02b351;
+            background: #e6ffe6;
         }
         
         .upload-area:hover {
@@ -265,13 +265,14 @@
                 </div>
                 <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls" onchange="handleFileSelect(event)">
                 
+                
                 <div class="browser-section" style="margin: 30px 0; text-align: center;">
-                    <div class="browser-area">
-                        <div class="upload-icon">🌐</div>
-                        <div class="upload-text">구글 브라우저 열기</div>
-                        <div class="upload-subtext">Selenium을 통해 시크릿 모드로 구글을 열어보세요 (10초 후 자동 종료)</div>
-                        <button class="upload-btn" type="button" onclick="openGoogleBrowser()" id="browserBtn">
-                            구글 브라우저 열기
+                    <div class="naver-area">
+                        <div class="upload-icon">🔐</div>
+                        <div class="upload-text">네이버 자동 로그인</div>
+                        <div class="upload-subtext">시크릿 모드로 네이버에 자동 로그인합니다 (15초 후 자동 종료)</div>
+                        <button class="upload-btn" type="button" onclick="naverAutoLogin()" id="naverBtn">
+                            네이버 로그인
                         </button>
                     </div>
                 </div>
@@ -284,6 +285,11 @@
                 <div class="loading" id="browserLoading" style="display: none;">
                     <div class="spinner"></div>
                     <p>브라우저를 실행하고 있습니다...</p>
+                </div>
+                
+                <div class="loading" id="naverLoading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>네이버 로그인을 진행하고 있습니다...</p>
                 </div>
             </div>
             
@@ -472,58 +478,6 @@
             document.getElementById('resultSection').style.display = 'none';
         }
         
-        // 구글 브라우저 열기 함수
-        async function openGoogleBrowser() {
-            const browserBtn = document.getElementById('browserBtn');
-            const browserLoading = document.getElementById('browserLoading');
-            
-            try {
-                // 버튼 비활성화 및 로딩 표시
-                browserBtn.disabled = true;
-                browserBtn.textContent = '실행 중...';
-                browserLoading.style.display = 'block';
-                hideError();
-                
-                const response = await fetch('/api/browser/open-google', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.detail || '브라우저 실행 중 오류가 발생했습니다.');
-                }
-                
-                const data = await response.json();
-                
-                if (data.status === 'success') {
-                    // 성공 메시지 표시
-                    showBrowserSuccess('✅ ' + data.message);
-                    
-                    // 10초 후 버튼 재활성화
-                    setTimeout(() => {
-                        browserBtn.disabled = false;
-                        browserBtn.textContent = '구글 브라우저 열기';
-                    }, 11000); // 11초 후 (브라우저가 10초 후 닫히므로)
-                    
-                } else {
-                    throw new Error(data.details?.message || '브라우저 실행에 실패했습니다.');
-                }
-                
-            } catch (error) {
-                console.error('Browser open error:', error);
-                showError('🚫 ' + error.message);
-                
-                // 버튼 재활성화
-                browserBtn.disabled = false;
-                browserBtn.textContent = '구글 브라우저 열기';
-                
-            } finally {
-                browserLoading.style.display = 'none';
-            }
-        }
         
         function showBrowserSuccess(message) {
             // 기존 에러 메시지 영역을 성공 메시지로 활용
@@ -542,6 +496,63 @@
                 errorDiv.style.color = '#d63031';
                 errorDiv.style.borderLeftColor = '#d63031';
             }, 15000);
+        }
+        
+        // 네이버 자동 로그인 함수
+        async function naverAutoLogin() {
+            const naverBtn = document.getElementById('naverBtn');
+            const naverLoading = document.getElementById('naverLoading');
+            
+            try {
+                // 버튼 비활성화 및 로딩 표시
+                naverBtn.disabled = true;
+                naverBtn.textContent = '로그인 중...';
+                naverLoading.style.display = 'block';
+                hideError();
+                
+                const response = await fetch('/api/browser/naver-login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || '네이버 로그인 중 오류가 발생했습니다.');
+                }
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // 로그인 성공 여부에 따라 메시지 표시
+                    if (data.details.login_success) {
+                        showBrowserSuccess('✅ 네이버 로그인이 성공적으로 완료되었습니다!');
+                    } else {
+                        showBrowserSuccess('⚠️ 로그인을 시도했습니다. 추가 인증이 필요할 수 있습니다.');
+                    }
+                    
+                    // 16초 후 버튼 재활성화 (15초 대기 + 1초 여유)
+                    setTimeout(() => {
+                        naverBtn.disabled = false;
+                        naverBtn.textContent = '네이버 로그인';
+                    }, 16000);
+                    
+                } else {
+                    throw new Error(data.details?.message || '네이버 로그인에 실패했습니다.');
+                }
+                
+            } catch (error) {
+                console.error('Naver login error:', error);
+                showError('🚫 ' + error.message);
+                
+                // 버튼 재활성화
+                naverBtn.disabled = false;
+                naverBtn.textContent = '네이버 로그인';
+                
+            } finally {
+                naverLoading.style.display = 'none';
+            }
         }
     </script>
 </body>
