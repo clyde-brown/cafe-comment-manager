@@ -131,6 +131,7 @@ class BrowserService:
             if not validate_url(url):
                 raise ValueError("유효하지 않은 URL입니다.")
 
+            # Context Manager를 사용 (자원 관리 : 프로세스/소켓/파일 핸들 같은 외부 리소스를 안전하게 정리)
             with BrowserController(headless=True, enable_images=False) as browser:
                 # 사용자 지정 URL로 이동
                 title = browser.navigate_to(url)
@@ -180,6 +181,7 @@ class BrowserService:
         login_success = False
 
         try:
+            # Context Manager를 사용 (자원 관리 : 프로세스/소켓/파일 핸들 같은 외부 리소스를 안전하게 정리)
             with BrowserController(
                 headless=False, enable_images=True
             ) as browser:  # 캡차를 위해 이미지 활성화
