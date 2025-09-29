@@ -15,52 +15,25 @@ from selenium.webdriver.chrome.options import Options
 # 로깅 설정
 logger = logging.getLogger(__name__)
 
-# 상수 정의
-DEFAULT_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+# 고급 브라우저 유틸리티 임포트
+from .advanced_browser_utils import create_enhanced_browser_profile
 
-# 자동화 우회 JavaScript
-AUTOMATION_BYPASS_SCRIPT = """
-    // navigator.webdriver 완전 제거
-    Object.defineProperty(navigator, 'webdriver', {
-        get: () => undefined,
-    });
-    
-    // chrome 객체 숨기기
-    delete window.chrome;
-    
-    // plugins 배열을 실제처럼 만들기
-    Object.defineProperty(navigator, 'plugins', {
-        get: () => [1, 2, 3, 4, 5],
-    });
-    
-    // languages 설정
-    Object.defineProperty(navigator, 'languages', {
-        get: () => ['ko-KR', 'ko', 'en-US', 'en'],
-    });
-    
-    // permissions 쿼리 결과 조작
-    const originalQuery = window.navigator.permissions.query;
-    window.navigator.permissions.query = (parameters) => (
-        parameters.name === 'notifications' ?
-            Promise.resolve({ state: Notification.permission }) :
-            originalQuery(parameters)
-    );
-    
-    // 자동화 관련 속성들 제거
-    delete navigator.__proto__.webdriver;
-    delete navigator.webdriver;
-    
-    // 기타 자동화 감지 우회
-    window.chrome = {
-        runtime: {},
-        loadTimes: function() {},
-        csi: function() {},
-        app: {}
-    };
-    
-    // 콘솔 로그 숨기기
-    console.clear();
-"""
+# 글로벌 브라우저 프로필 (한 번만 생성)
+_browser_profile = None
+
+
+def get_browser_profile():
+    """브라우저 프로필 싱글톤 패턴으로 반환"""
+    global _browser_profile
+    if _browser_profile is None:
+        _browser_profile = create_enhanced_browser_profile()
+        logger.info("새로운 브라우저 프로필 생성됨")
+    return _browser_profile
+
+
+# 하위 호환성을 위한 상수들
+DEFAULT_USER_AGENT = get_browser_profile()["user_agent"]
+AUTOMATION_BYPASS_SCRIPT = get_browser_profile()["bypass_script"]
 
 
 def create_chrome_options(
@@ -112,8 +85,9 @@ def create_chrome_options(
     chrome_options.add_argument("--disable-features=TranslateUI")
     chrome_options.add_argument("--disable-ipc-flooding-protection")
 
-    # User-Agent 설정
-    chrome_options.add_argument(f"--user-agent={DEFAULT_USER_AGENT}")
+    # 동적 User-Agent 설정 (현재 OS 기반)
+    browser_profile = get_browser_profile()
+    chrome_options.add_argument(f"--user-agent={browser_profile['user_agent']}")
 
     # 실험적 옵션들
     chrome_options.add_experimental_option(
@@ -142,17 +116,40 @@ def create_chrome_options(
 
 def setup_automation_bypass(driver: webdriver.Chrome) -> None:
     """
-    자동화 탐지 우회를 위한 JavaScript 주입
+    강화된 자동화 탐지 우회를 위한 JavaScript 주입
 
     Args:
         driver: Chrome WebDriver 인스턴스
     """
     try:
+        browser_profile = get_browser_profile()
+
+        # 강화된 우회 스크립트 주입
         driver.execute_cdp_cmd(
             "Page.addScriptToEvaluateOnNewDocument",
-            {"source": AUTOMATION_BYPASS_SCRIPT},
+            {"source": browser_profile["bypass_script"]},
         )
-        logger.info("자동화 탐지 우회 스크립트 주입 완료")
+
+        # Client Hints 헤더 설정
+        client_hints = browser_profile["client_hints"]
+        for header, value in client_hints.items():
+            try:
+                driver.execute_cdp_cmd(
+                    "Network.setUserAgentOverride",
+                    {
+                        "userAgent": browser_profile["user_agent"],
+                        "acceptLanguage": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+                        "platform": browser_profile["platform_info"]["platform"],
+                    },
+                )
+                break  # 첫 번째 성공하면 중단
+            except:
+                continue
+
+        logger.info("강화된 자동화 탐지 우회 스크립트 주입 완료")
+        logger.info(f"플랫폼: {browser_profile['platform_info']['platform']}")
+        logger.info(f"언어: {browser_profile['navigator_languages']}")
+
     except Exception as e:
         logger.warning(f"자동화 탐지 우회 스크립트 주입 실패: {e}")
 
