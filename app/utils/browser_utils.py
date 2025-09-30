@@ -71,6 +71,7 @@ def create_chrome_options(
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--disable-web-security")
     chrome_options.add_argument("--allow-running-insecure-content")
+    chrome_options.add_argument("--allow-file-access-from-files")
 
     # 불필요한 기능 비활성화
     chrome_options.add_argument("--disable-extensions")
@@ -91,6 +92,7 @@ def create_chrome_options(
     chrome_options.add_argument("--disable-browser-side-navigation")
     chrome_options.add_argument("--disable-features=TranslateUI")
     chrome_options.add_argument("--disable-ipc-flooding-protection")
+    chrome_options.add_argument("--disable-features=VizDisplayCompositor")
 
     # 동적 User-Agent 설정 (현재 OS 기반)
     browser_profile = get_browser_profile()

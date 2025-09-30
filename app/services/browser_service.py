@@ -185,14 +185,38 @@ class BrowserService:
             with BrowserController(
                 headless=False, enable_images=True
             ) as browser:  # 캡차를 위해 이미지 활성화
-                # 네이버 로그인 페이지로 이동
+
+                # 네이버 로그인 페이지로 이동 (먼저 페이지 로드)
                 title = browser.navigate_to(NAVER_LOGIN_URL)
 
-                # 스크린샷 1: 로그인 페이지 (주석 처리)
+                # 페이지 로드 후 캐시 및 쿠키 정리 (안전하게)
+                try:
+                    # 쿠키만 안전하게 정리
+                    browser.driver.delete_all_cookies()
+
+                    # localStorage와 sessionStorage는 조건부로 정리
+                    browser.driver.execute_script(
+                        """
+                        try {
+                            if (typeof(Storage) !== "undefined" && window.location.protocol !== 'data:') {
+                                window.localStorage.clear();
+                                window.sessionStorage.clear();
+                                console.log('Storage cleared successfully');
+                            }
+                        } catch (e) {
+                            console.log('Storage clear skipped:', e.message);
+                        }
+                    """
+                    )
+                    logger.info("브라우저 캐시 정리 완료")
+                except Exception as e:
+                    logger.warning(f"캐시 정리 중 오류 (무시됨): {e}")
+
+                # 추가 대기 시간 (페이지 안정화)
                 time.sleep(1)
-                # browser.take_screenshot(
-                #     "screenshot_naver_1_login_page.png", "네이버 로그인 페이지"
-                # )
+
+                # 1. 로그인 페이지 (주석 처리)
+                time.sleep(1)
 
                 # 로그인 폼 요소 대기 및 입력
                 username_field = browser.wait_for_element(By.ID, "id")
@@ -200,11 +224,8 @@ class BrowserService:
                 username_field.send_keys(username)
                 logger.info("아이디 입력 완료")
 
-                # 스크린샷 2: 아이디 입력 후 (주석 처리)
+                # 2. 아이디 입력 후 (주석 처리)
                 time.sleep(1)
-                # browser.take_screenshot(
-                #     "screenshot_naver_2_id_input.png", "아이디 입력 완료"
-                # )
 
                 # 패스워드 입력
                 password_field = browser.driver.find_element(By.ID, "pw")
@@ -212,22 +233,16 @@ class BrowserService:
                 password_field.send_keys(password)
                 logger.info("패스워드 입력 완료")
 
-                # 스크린샷 3: 패스워드 입력 후 (주석 처리)
+                # 3.패스워드 입력 후 (주석 처리)
                 time.sleep(1)
-                # browser.take_screenshot(
-                #     "screenshot_naver_3_password_input.png", "패스워드 입력 완료"
-                # )
 
                 # 로그인 버튼 클릭
                 login_button = browser.driver.find_element(By.ID, "log.login")
                 login_button.click()
                 logger.info("로그인 버튼 클릭")
 
-                # 스크린샷 4: 로그인 버튼 클릭 후 (주석 처리)
+                # 스크린샷 3. 로그인 버튼 클릭 후 (주석 처리)
                 time.sleep(2)
-                # browser.take_screenshot(
-                #     "screenshot_naver_4_login_clicked.png", "로그인 버튼 클릭 후"
-                # )
 
                 # 로그인 처리 대기 및 캡차 확인
                 logger.info("로그인 처리 중... 캡차나 추가 인증 확인")
@@ -258,11 +273,8 @@ class BrowserService:
                     title = browser.get_page_title()
                     logger.info("네이버 로그인 성공!")
 
-                    # 성공 스크린샷 (주석 처리)
+                    # 성공
                     time.sleep(2)
-                    # browser.take_screenshot(
-                    #     "screenshot_naver_5_login_success.png", "로그인 성공"
-                    # )
 
                 except Exception as login_error:
                     logger.error(f"로그인 확인 중 오류: {login_error}")
@@ -280,17 +292,8 @@ class BrowserService:
                     except:
                         logger.info("특별한 오류 메시지는 없습니다.")
 
-                    # 실패 스크린샷 (주석 처리)
+                    # 실패
                     time.sleep(2)
-                    # browser.take_screenshot(
-                    #     "screenshot_naver_5_login_failed_or_auth.png",
-                    #     "로그인 실패 또는 추가 인증 필요",
-                    # )
-
-                # 최종 스크린샷 (주석 처리)
-                # browser.take_screenshot(
-                #     "screenshot_naver_6_final_state.png", "최종 상태"
-                # )
 
                 return {
                     "success": True,

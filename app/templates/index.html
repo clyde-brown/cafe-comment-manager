@@ -122,6 +122,125 @@
             box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
         
+        /* 상태 배지 스타일 */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            min-width: 60px;
+        }
+        
+        .status-idle {
+            background: #e0e0e0;
+            color: #666;
+        }
+        
+        .status-loading {
+            background: #ffc107;
+            color: #fff;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .status-success {
+            background: #4caf50;
+            color: #fff;
+        }
+        
+        .status-error {
+            background: #f44336;
+            color: #fff;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        /* 로그인 버튼 스타일 */
+        .login-btn {
+            background: #03c75a;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .login-btn:hover:not(:disabled) {
+            background: #02b351;
+            transform: translateY(-1px);
+        }
+        
+        .login-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* 전체 로그인 버튼 스타일 */
+        .batch-login-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+        
+        .batch-login-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .batch-login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* 테이블 스타일 개선 */
+        .data-table table {
+            font-size: 0.9rem;
+        }
+        
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .data-table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        .error-cell {
+            text-align: left !important;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .time-cell {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
         .loading {
             display: none;
             text-align: center;
@@ -434,32 +553,286 @@
                 </div>
             `;
             
-            // 테이블 생성
-            if (data.preview && data.preview.length > 0) {
-                const headers = Object.keys(data.preview[0]);
+            // 계정 데이터 저장 및 테이블 생성
+            if (data.data && data.data.length > 0) {
+                // 첫 번째 행이 헤더인지 확인하고 제거
+                const rawData = data.data;
+                const headers = Object.keys(rawData[0]);
                 
-                let tableHTML = '<thead><tr>';
-                headers.forEach(header => {
-                    tableHTML += `<th>${header}</th>`;
-                });
-                tableHTML += '</tr></thead><tbody>';
+                // 계정 데이터로 변환 (첫 번째 행 제외)
+                window.accountsData = rawData.slice(0).map((row, index) => ({
+                    id: index + 1,
+                    username: row[headers[0]] || '',  // 첫 번째 컬럼: 아이디
+                    password: row[headers[1]] || '',  // 두 번째 컬럼: 비밀번호
+                    status: 'idle',
+                    error_message: null,
+                    login_time: null
+                }));
                 
-                data.preview.forEach(row => {
-                    tableHTML += '<tr>';
-                    headers.forEach(header => {
-                        const cellValue = row[header] || '';
-                        tableHTML += `<td>${cellValue}</td>`;
-                    });
-                    tableHTML += '</tr>';
-                });
+                // 파일 정보에 전체 로그인 버튼 추가
+                fileInfo.innerHTML += `
+                    <div class="info-card">
+                        <div class="label">총 계정 수</div>
+                        <div class="value">${window.accountsData.length}</div>
+                    </div>
+                    <div class="info-card" style="grid-column: span 2;">
+                        <button class="batch-login-btn" onclick="startBatchLogin()" id="batchLoginBtn">
+                            🚀 전체 로그인 (${window.accountsData.length}개 계정)
+                        </button>
+                    </div>
+                `;
                 
-                tableHTML += '</tbody>';
-                dataTable.innerHTML = tableHTML;
+                // 계정 테이블 생성
+                displayAccountsTable();
             }
             
             resultSection.style.display = 'block';
         }
         
+        // 계정 테이블 표시 함수
+        function displayAccountsTable() {
+            const dataTable = document.getElementById('dataTable');
+            
+            let tableHTML = `
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">번호</th>
+                        <th style="width: 180px;">아이디</th>
+                        <th style="width: 120px;">비밀번호</th>
+                        <th style="width: 120px;">상태</th>
+                        <th style="width: 100px;">작업</th>
+                        <th style="width: 150px;">로그인 시간</th>
+                        <th style="min-width: 200px;">오류 메시지</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+            
+            window.accountsData.forEach(account => {
+                const statusBadge = getStatusBadge(account.status);
+                const loginTime = account.login_time ? 
+                    new Date(account.login_time).toLocaleString() : '-';
+                const errorMsg = account.error_message || '-';
+                
+                tableHTML += `
+                    <tr id="account-row-${account.id}">
+                        <td>${account.id}</td>
+                        <td>${account.username}</td>
+                        <td>${maskPassword(account.password)}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button 
+                                class="login-btn" 
+                                onclick="loginSingleAccount(${account.id})"
+                                id="login-btn-${account.id}"
+                                ${account.status === 'loading' ? 'disabled' : ''}
+                            >
+                                ${account.status === 'loading' ? '진행중' : '로그인'}
+                            </button>
+                        </td>
+                        <td class="time-cell">${loginTime}</td>
+                        <td class="error-cell">${errorMsg}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += '</tbody>';
+            dataTable.innerHTML = tableHTML;
+        }
+        
+        function getStatusBadge(status) {
+            const badges = {
+                'idle': '<span class="status-badge status-idle">대기</span>',
+                'loading': '<span class="status-badge status-loading">로그인 중</span>',
+                'success': '<span class="status-badge status-success">성공</span>',
+                'error': '<span class="status-badge status-error">실패</span>'
+            };
+            return badges[status] || badges['idle'];
+        }
+        
+        function maskPassword(password) {
+            return password ? '*'.repeat(Math.min(password.length, 8)) : '';
+        }
+        
+        // 단일 계정 로그인
+        async function loginSingleAccount(accountId) {
+            const account = window.accountsData.find(acc => acc.id === accountId);
+            if (!account) return;
+            
+            try {
+                // 상태를 로딩으로 변경
+                account.status = 'loading';
+                updateAccountRow(accountId);
+                
+                const response = await fetch('/api/login/single', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: account.username,
+                        password: account.password,
+                        account_id: accountId
+                    })
+                });
+                
+                const result = await response.json();
+                
+                // 결과에 따라 상태 업데이트
+                account.status = result.status;
+                account.error_message = result.error_message;
+                account.login_time = result.login_time;
+                
+                updateAccountRow(accountId);
+                
+                if (result.success) {
+                    showMessage(`계정 ${account.username} 로그인 성공!`, 'success');
+                } else {
+                    showMessage(`계정 ${account.username} 로그인 실패: ${result.error_message}`, 'error');
+                }
+                
+            } catch (error) {
+                console.error('로그인 오류:', error);
+                account.status = 'error';
+                account.error_message = error.message;
+                updateAccountRow(accountId);
+                showMessage(`로그인 중 오류 발생: ${error.message}`, 'error');
+            }
+        }
+        
+        // 전체 계정 일괄 로그인
+        async function startBatchLogin() {
+            if (!window.accountsData || window.accountsData.length === 0) {
+                showError('로그인할 계정이 없습니다.');
+                return;
+            }
+            
+            try {
+                const batchBtn = document.getElementById('batchLoginBtn');
+                batchBtn.disabled = true;
+                batchBtn.innerHTML = '🔄 일괄 로그인 시작 중...';
+                
+                const response = await fetch('/api/login/batch', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        accounts: window.accountsData
+                    })
+                });
+                
+                const result = await response.json();
+                window.currentTaskId = result.task_id;
+                
+                showMessage(`${result.total_accounts}개 계정의 일괄 로그인을 시작했습니다.`, 'success');
+                
+                // 상태 모니터링 시작
+                startStatusMonitoring();
+                
+            } catch (error) {
+                console.error('일괄 로그인 시작 오류:', error);
+                showError(`일괄 로그인 시작 실패: ${error.message}`);
+                
+                const batchBtn = document.getElementById('batchLoginBtn');
+                batchBtn.disabled = false;
+                batchBtn.innerHTML = '🚀 전체 로그인';
+            }
+        }
+        
+        // 실시간 상태 모니터링
+        function startStatusMonitoring() {
+            if (!window.currentTaskId) return;
+            
+            const interval = setInterval(async () => {
+                try {
+                    const response = await fetch(`/api/login/status/${window.currentTaskId}`);
+                    const status = await response.json();
+                    
+                    // 계정 상태 업데이트
+                    status.accounts.forEach(account => {
+                        const localAccount = window.accountsData.find(acc => acc.id === account.id);
+                        if (localAccount) {
+                            localAccount.status = account.status;
+                            localAccount.error_message = account.error_message;
+                            localAccount.login_time = account.login_time;
+                        }
+                    });
+                    
+                    // 테이블 업데이트
+                    displayAccountsTable();
+                    
+                    // 진행률 업데이트
+                    updateProgress(status);
+                    
+                    // 완료되면 모니터링 중단
+                    if (!status.in_progress) {
+                        clearInterval(interval);
+                        onBatchLoginComplete(status);
+                    }
+                    
+                } catch (error) {
+                    console.error('상태 조회 오류:', error);
+                    clearInterval(interval);
+                }
+            }, 2000); // 2초마다 상태 확인
+        }
+        
+        function updateAccountRow(accountId) {
+            const account = window.accountsData.find(acc => acc.id === accountId);
+            if (!account) return;
+            
+            const row = document.getElementById(`account-row-${accountId}`);
+            if (!row) return;
+            
+            const statusCell = row.children[3];
+            const actionCell = row.children[4];
+            const timeCell = row.children[5];
+            const errorCell = row.children[6];
+            
+            statusCell.innerHTML = getStatusBadge(account.status);
+            
+            const loginTime = account.login_time ? 
+                new Date(account.login_time).toLocaleString() : '-';
+            timeCell.textContent = loginTime;
+            
+            errorCell.textContent = account.error_message || '-';
+            
+            const button = actionCell.querySelector('button');
+            button.disabled = account.status === 'loading';
+            button.textContent = account.status === 'loading' ? '진행중' : '로그인';
+        }
+        
+        function updateProgress(status) {
+            const batchBtn = document.getElementById('batchLoginBtn');
+            if (status.in_progress) {
+                batchBtn.innerHTML = `🔄 진행중... (${status.completed_accounts}/${status.total_accounts}) ${status.progress_percentage}%`;
+            } else {
+                batchBtn.innerHTML = '🚀 전체 로그인';
+                batchBtn.disabled = false;
+            }
+        }
+        
+        function onBatchLoginComplete(status) {
+            showMessage(
+                `일괄 로그인 완료! 성공: ${status.success_count}, 실패: ${status.error_count}`, 
+                status.success_count > 0 ? 'success' : 'error'
+            );
+            window.currentTaskId = null;
+        }
+        
+        function showMessage(message, type = 'info') {
+            // 간단한 메시지 표시 (기존 showError 함수 활용)
+            if (type === 'success') {
+                console.log('✅', message);
+                // TODO: 성공 메시지 UI 구현
+            } else if (type === 'error') {
+                showError(message);
+            } else {
+                console.log('ℹ️', message);
+            }
+        }
+
         function showLoading(show) {
             document.getElementById('loading').style.display = show ? 'block' : 'none';
         }
