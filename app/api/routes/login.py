@@ -194,8 +194,10 @@ async def process_batch_login(task_id: str, accounts: List[AccountInfo]):
 
                 logger.info(f"계정 {account.username} 로그인 시작")
 
-                # 계정별 추가 지연 (캡챠 방지)
-                await asyncio.sleep(1 + (i * 0.5))  # 첫 번째: 1초, 두 번째: 1.5초, ...
+                # 계정별 추가 지연 (캡챠 방지 - 더 긴 간격)
+                await asyncio.sleep(
+                    3 + (i * 2)
+                )  # 첫 번째: 3초, 두 번째: 5초, 세 번째: 7초...
 
                 # 네이버 로그인 실행 (동기 함수로 직접 호출)
                 result = BrowserService.login_to_naver(
@@ -220,8 +222,8 @@ async def process_batch_login(task_id: str, accounts: List[AccountInfo]):
                 login_tasks[task_id]["accounts"][i] = account
                 login_tasks[task_id]["completed_accounts"] += 1
 
-                # 계정 간 간격 (서버 부하 방지)
-                await asyncio.sleep(2)
+                # 계정 간 간격 (서버 부하 방지 - 더 긴 간격)
+                await asyncio.sleep(5)
 
             except Exception as e:
                 logger.error(f"계정 {account.username} 처리 중 오류: {e}")

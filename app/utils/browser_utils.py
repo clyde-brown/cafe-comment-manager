@@ -123,6 +123,107 @@ def create_chrome_options(
     return chrome_options
 
 
+def create_isolated_chrome_options(
+    profile_data: dict,
+    headless: bool = False,
+    enable_images: bool = True,
+) -> Options:
+    """
+    완전히 격리된 Chrome 옵션 생성 (계정별 독립적인 프로필)
+
+    Args:
+        profile_data: create_isolated_browser_profile()에서 생성된 프로필 데이터
+        headless: 헤드리스 모드 (기본: False - 캡챠 방지)
+        enable_images: 이미지 로딩 활성화 (기본: True - 캡챠 표시)
+
+    Returns:
+        Options: 격리된 Chrome 옵션 객체
+    """
+    chrome_options = Options()
+
+    # 임시 프로필 디렉토리 설정 (완전한 세션 분리)
+    chrome_options.add_argument(f"--user-data-dir={profile_data['temp_profile_dir']}")
+
+    # 각 인스턴스마다 다른 디버깅 포트 사용 (충돌 방지)
+    chrome_options.add_argument(
+        f"--remote-debugging-port={profile_data['debugging_port']}"
+    )
+
+    # 기본 브라우저 설정
+    chrome_options.add_argument("--incognito")  # 시크릿 모드
+    chrome_options.add_argument("--start-maximized")  # 창 최대화
+    chrome_options.add_argument("--no-first-run")  # 첫 실행 설정 건너뛰기
+    chrome_options.add_argument(
+        "--no-default-browser-check"
+    )  # 기본 브라우저 체크 건너뛰기
+
+    # 헤드리스 모드 설정 (기본적으로 비활성화)
+    if headless:
+        chrome_options.add_argument("--headless")
+
+    # 안정성 및 보안 옵션
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--disable-web-security")
+    chrome_options.add_argument("--allow-running-insecure-content")
+    chrome_options.add_argument("--allow-file-access-from-files")
+
+    # 세션 완전 분리를 위한 추가 옵션
+    chrome_options.add_argument("--disable-background-timer-throttling")
+    chrome_options.add_argument("--disable-renderer-backgrounding")
+    chrome_options.add_argument("--disable-backgrounding-occluded-windows")
+    chrome_options.add_argument("--disable-sync")
+    chrome_options.add_argument("--disable-translate")
+
+    # 불필요한 기능 비활성화
+    chrome_options.add_argument("--disable-extensions")
+    chrome_options.add_argument("--disable-plugins")
+    chrome_options.add_argument("--disable-plugins-discovery")
+    chrome_options.add_argument("--disable-preconnect")
+    chrome_options.add_argument("--disable-prefetch")
+
+    # 이미지 로딩 제어 (캡챠를 위해 기본적으로 활성화)
+    if not enable_images:
+        chrome_options.add_argument("--disable-images")
+
+    # 자동화 탐지 방지
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+    chrome_options.add_argument("--disable-automation")
+    chrome_options.add_argument("--disable-infobars")
+    chrome_options.add_argument("--disable-browser-side-navigation")
+    chrome_options.add_argument("--disable-features=TranslateUI")
+    chrome_options.add_argument("--disable-ipc-flooding-protection")
+    chrome_options.add_argument("--disable-features=VizDisplayCompositor")
+
+    # 계정별 고유 User-Agent 설정
+    chrome_options.add_argument(f"--user-agent={profile_data['user_agent']}")
+
+    # 실험적 옵션들
+    chrome_options.add_experimental_option(
+        "excludeSwitches", ["enable-automation", "enable-logging"]
+    )
+    chrome_options.add_experimental_option("useAutomationExtension", False)
+    chrome_options.add_experimental_option("detach", True)
+
+    # 브라우저 프로필 설정
+    prefs = {
+        "profile.default_content_setting_values.notifications": 2,
+        "profile.default_content_settings.popups": 0,
+        "profile.default_content_setting_values.plugins": 1,
+        "profile.content_settings.plugin_whitelist.adobe-flash-player": 1,
+        "profile.content_settings.exceptions.plugins.*,*.per_resource.adobe-flash-player": 1,
+    }
+
+    # 이미지 설정
+    if not enable_images:
+        prefs["profile.managed_default_content_settings.images"] = 2
+
+    chrome_options.add_experimental_option("prefs", prefs)
+
+    return chrome_options
+
+
 def setup_automation_bypass(driver: webdriver.Chrome) -> None:
     """
     강화된 자동화 탐지 우회를 위한 JavaScript 주입

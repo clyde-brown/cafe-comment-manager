@@ -21,12 +21,20 @@ class UserAgentManager:
         self.os_version = platform.release()
         self.architecture = platform.machine()
 
-        # Chrome 버전 풀 (2024년 기준 최신 버전들)
+        # Chrome 버전 풀 (확장된 버전 리스트 - User-Agent 로테이션용)
         self.chrome_versions = [
             "131.0.0.0",
             "130.0.0.0",
             "129.0.0.0",
             "128.0.0.0",
+            "127.0.0.0",
+            "126.0.0.0",
+            "125.0.0.0",
+            "124.0.0.0",
+            "131.0.6778.85",
+            "130.0.6723.117",
+            "129.0.6668.100",
+            "128.0.6613.137",
         ]
 
         # 각 OS별 세부 버전 정보
@@ -322,6 +330,64 @@ def create_enhanced_browser_profile() -> Dict:
         "navigator_languages": ua_manager.get_navigator_languages(),
         "platform_info": ua_manager.get_platform_info(),
         "screen_info": ua_manager.get_screen_info(),
+    }
+
+
+def create_isolated_browser_profile(account_id: str = None) -> Dict:
+    """
+    완전히 격리된 브라우저 프로필 생성 (계정별 고유)
+
+    Args:
+        account_id: 계정 ID (User-Agent 시드로 사용)
+
+    Returns:
+        Dict: 격리된 브라우저 프로필
+    """
+    import tempfile
+    import uuid
+    import hashlib
+
+    ua_manager = UserAgentManager()
+    fingerprint_manager = BrowserFingerprintManager(ua_manager)
+
+    # 계정 ID 기반으로 일관된 User-Agent 생성 (하지만 매번 다름)
+    if account_id:
+        # 계정 ID를 해시하여 시드로 사용
+        seed = int(hashlib.md5(account_id.encode()).hexdigest()[:8], 16)
+        import random
+
+        random.seed(seed)
+        user_agent = ua_manager.generate_user_agent(randomize=True)
+        random.seed()  # 시드 초기화
+    else:
+        user_agent = ua_manager.generate_user_agent(randomize=True)
+
+    bypass_script = fingerprint_manager.get_minimal_bypass_script()  # 최소형 사용
+
+    # 임시 프로필 디렉토리 생성
+    temp_profile_dir = tempfile.mkdtemp(
+        prefix=f"chrome_profile_{account_id or uuid.uuid4().hex[:8]}_"
+    )
+
+    # 디버깅 포트 랜덤 생성
+    import random
+
+    debugging_port = random.randint(9222, 9999)
+
+    logger.info(
+        f"격리된 프로필 생성 - 계정: {account_id}, User-Agent: {user_agent[:50]}..."
+    )
+    logger.info(f"임시 프로필 디렉토리: {temp_profile_dir}")
+
+    return {
+        "user_agent": user_agent,
+        "bypass_script": bypass_script,
+        "navigator_languages": ua_manager.get_navigator_languages(),
+        "platform_info": ua_manager.get_platform_info(),
+        "screen_info": ua_manager.get_screen_info(),
+        "temp_profile_dir": temp_profile_dir,
+        "debugging_port": debugging_port,
+        "account_id": account_id or "anonymous",
     }
 
 

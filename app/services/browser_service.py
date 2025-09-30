@@ -15,12 +15,14 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from app.utils.browser_utils import (
     create_chrome_options,
+    create_isolated_chrome_options,
     setup_automation_bypass,
     safe_quit_driver,
     save_screenshot,
     validate_url,
     create_safe_filename,
 )
+from app.utils.advanced_browser_utils import create_isolated_browser_profile
 
 # 로깅 설정
 logging.basicConfig(level=logging.INFO)
@@ -111,6 +113,110 @@ class BrowserController:
         return ""
 
 
+class IsolatedBrowserController:
+    """완전히 격리된 브라우저 제어 클래스 (계정별 독립적인 세션)"""
+
+    def __init__(
+        self,
+        account_id: str,
+        headless: bool = False,
+        enable_images: bool = True,
+    ):
+        self.account_id = account_id
+        self.headless = headless
+        self.enable_images = enable_images
+        self.driver: Optional[webdriver.Chrome] = None
+        self.profile_data = None
+
+    def __enter__(self):
+        """컨텍스트 매니저 진입"""
+        self._initialize_driver()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """컨텍스트 매니저 종료 및 리소스 정리"""
+        self._cleanup()
+
+    def _initialize_driver(self) -> None:
+        """완전히 격리된 WebDriver 초기화"""
+        try:
+            # 계정별 격리된 프로필 생성
+            self.profile_data = create_isolated_browser_profile(self.account_id)
+
+            # 격리된 Chrome 옵션 생성
+            options = create_isolated_chrome_options(
+                self.profile_data, self.headless, self.enable_images
+            )
+
+            # Chrome 드라이버 시작
+            self.driver = webdriver.Chrome(options=options)
+
+            # 자동화 탐지 우회 스크립트 주입 (최소형)
+            self.driver.execute_cdp_cmd(
+                "Page.addScriptToEvaluateOnNewDocument",
+                {"source": self.profile_data["bypass_script"]},
+            )
+
+            logger.info(f"격리된 브라우저 초기화 완료 - 계정: {self.account_id}")
+            logger.info(f"User-Agent: {self.profile_data['user_agent'][:50]}...")
+            logger.info(f"프로필 디렉토리: {self.profile_data['temp_profile_dir']}")
+
+        except Exception as e:
+            logger.error(f"격리된 브라우저 초기화 실패 (계정: {self.account_id}): {e}")
+            self._cleanup()
+            raise
+
+    def _cleanup(self):
+        """리소스 정리"""
+        # 브라우저 종료
+        if self.driver:
+            try:
+                safe_quit_driver(self.driver)
+                logger.info(f"브라우저 종료 완료 - 계정: {self.account_id}")
+            except Exception as e:
+                logger.warning(f"브라우저 종료 중 오류 (계정: {self.account_id}): {e}")
+
+        # 임시 프로필 디렉토리 정리
+        if self.profile_data and self.profile_data.get("temp_profile_dir"):
+            try:
+                import shutil
+
+                shutil.rmtree(self.profile_data["temp_profile_dir"], ignore_errors=True)
+                logger.info(f"임시 프로필 정리 완료 - 계정: {self.account_id}")
+            except Exception as e:
+                logger.warning(f"프로필 정리 중 오류 (계정: {self.account_id}): {e}")
+
+    def navigate_to(self, url: str) -> str:
+        """지정된 URL로 이동"""
+        if not self.driver:
+            raise RuntimeError("WebDriver가 초기화되지 않았습니다.")
+
+        self.driver.get(url)
+        title = self.driver.title
+        logger.info(f"페이지 이동 완료 (계정: {self.account_id}): {url}")
+        return title
+
+    def wait_for_element(self, by, value, timeout: int = 10):
+        """요소가 나타날 때까지 대기"""
+        if not self.driver:
+            raise RuntimeError("WebDriver가 초기화되지 않았습니다.")
+
+        wait = WebDriverWait(self.driver, timeout)
+        return wait.until(EC.presence_of_element_located((by, value)))
+
+    def get_current_url(self) -> str:
+        """현재 URL 반환"""
+        if self.driver:
+            return self.driver.current_url
+        return ""
+
+    def get_page_title(self) -> str:
+        """현재 페이지 제목 반환"""
+        if self.driver:
+            return self.driver.title
+        return ""
+
+
 class BrowserService:
     """브라우저 관련 비즈니스 로직을 처리하는 서비스 클래스"""
 
@@ -139,19 +245,9 @@ class BrowserService:
                 # 스크린샷 촬영 (주석 처리)
                 time.sleep(1)
                 safe_filename = create_safe_filename(url)
-                # browser.take_screenshot(
-                #     f"screenshot_custom_1_{safe_filename}.png",
-                #     f"사용자 지정 URL 접속: {url}",
-                # )
 
                 # 지정된 시간만큼 대기
                 time.sleep(duration)
-
-                # 최종 스크린샷 (주석 처리)
-                # browser.take_screenshot(
-                #     f"screenshot_custom_2_final_{safe_filename}.png",
-                #     f"최종 상태: {url}",
-                # )
 
                 return {
                     "success": True,
@@ -181,10 +277,10 @@ class BrowserService:
         login_success = False
 
         try:
-            # Context Manager를 사용 (자원 관리 : 프로세스/소켓/파일 핸들 같은 외부 리소스를 안전하게 정리)
-            with BrowserController(
-                headless=False, enable_images=True
-            ) as browser:  # 캡차를 위해 이미지 활성화
+            # 격리된 브라우저 컨트롤러 사용 (계정별 완전 세션 분리)
+            with IsolatedBrowserController(
+                account_id=username, headless=False, enable_images=True
+            ) as browser:  # 캡챠를 위해 이미지 활성화, 헤드리스 비활성화
 
                 # 네이버 로그인 페이지로 이동 (먼저 페이지 로드)
                 title = browser.navigate_to(NAVER_LOGIN_URL)
