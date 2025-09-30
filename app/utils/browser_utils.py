@@ -16,18 +16,25 @@ from selenium.webdriver.chrome.options import Options
 logger = logging.getLogger(__name__)
 
 # 고급 브라우저 유틸리티 임포트
-from .advanced_browser_utils import create_enhanced_browser_profile
+from .advanced_browser_utils import (
+    create_minimal_browser_profile,
+    create_enhanced_browser_profile,
+)
 
 # 글로벌 브라우저 프로필 (한 번만 생성)
 _browser_profile = None
 
 
-def get_browser_profile():
+def get_browser_profile(use_minimal: bool = True):
     """브라우저 프로필 싱글톤 패턴으로 반환"""
     global _browser_profile
     if _browser_profile is None:
-        _browser_profile = create_enhanced_browser_profile()
-        logger.info("새로운 브라우저 프로필 생성됨")
+        if use_minimal:
+            _browser_profile = create_minimal_browser_profile()  # 최소형 (권장)
+            logger.info("최소형 브라우저 프로필 생성됨 - 자연스럽고 안전")
+        else:
+            _browser_profile = create_enhanced_browser_profile()  # 고급형 (탐지시만)
+            logger.info("고급형 브라우저 프로필 생성됨 - 강화된 우회")
     return _browser_profile
 
 

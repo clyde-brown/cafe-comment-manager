@@ -168,160 +168,84 @@ class BrowserFingerprintManager:
         self.ua_manager = ua_manager
 
     def get_enhanced_bypass_script(self) -> str:
-        """강화된 자동화 탐지 우회 JavaScript"""
+        """강화된 자동화 탐지 우회 JavaScript - 과도한 조작 제거"""
         platform_info = self.ua_manager.get_platform_info()
         languages = self.ua_manager.get_navigator_languages()
-        screen_info = self.ua_manager.get_screen_info()
 
         return f"""
-        // 1. navigator.webdriver 완전 제거
-        Object.defineProperty(navigator, 'webdriver', {{
-            get: () => undefined,
-            configurable: true
-        }});
+        (function() {{
+            'use strict';
+            
+            try {{
+                // 1. 핵심: navigator.webdriver 제거 (가장 중요!)
+                Object.defineProperty(navigator, 'webdriver', {{
+                    get: () => undefined,
+                    configurable: true
+                }});
         
-        // 모든 가능한 webdriver 속성 제거
-        ['webdriver', '__webdriver_script_fn', '__webdriver_evaluate', 
-         '__selenium_evaluate', '__webdriver_unwrapped', '__driver_evaluate',
-         '__selenium_unwrapped', '__fxdriver_evaluate', '__fxdriver_unwrapped'].forEach(prop => {{
-            delete Object.getPrototypeOf(navigator)[prop];
-            delete navigator[prop];
-        }});
+                // 2. 주요 Selenium 속성들만 제거
+                ['webdriver', '__webdriver_script_fn', '__selenium_evaluate', 
+                 '__webdriver_unwrapped'].forEach(prop => {{
+                    delete Object.getPrototypeOf(navigator)[prop];
+                    delete navigator[prop];
+                }});
         
-        // 2. navigator.platform 설정
-        Object.defineProperty(navigator, 'platform', {{
-            get: () => '{platform_info["platform"]}',
-            configurable: true
-        }});
+                // 3. 기본 플랫폼 정보만 설정 (너무 상세하지 않게)
+                Object.defineProperty(navigator, 'platform', {{
+                    get: () => '{platform_info["platform"]}',
+                    configurable: true
+                }});
         
-        // 3. navigator.languages 설정
-        Object.defineProperty(navigator, 'languages', {{
-            get: () => {languages},
-            configurable: true
-        }});
+                Object.defineProperty(navigator, 'languages', {{
+                    get: () => {languages},
+                    configurable: true
+                }});
         
-        // 4. 실제와 유사한 플러그인 배열
-        Object.defineProperty(navigator, 'plugins', {{
-            get: () => {{
-                const plugins = [
-                    {{
-                        0: {{ name: "Chrome PDF Plugin", filename: "internal-pdf-viewer", description: "Portable Document Format" }},
-                        1: {{ name: "Chrome PDF Viewer", filename: "mhjfbmdgcfjbbpaeojofohoefgiehjai", description: "" }},
-                        2: {{ name: "Native Client", filename: "internal-nacl-plugin", description: "" }},
-                        length: 3,
-                        item: function(index) {{ return this[index] || null; }},
-                        namedItem: function(name) {{ 
-                            for(let i = 0; i < this.length; i++) {{
-                                if(this[i] && this[i].name === name) return this[i];
-                            }}
-                            return null;
-                        }}
-                    }}
-                ];
-                return plugins[0];
-            }},
-            configurable: true
-        }});
-        
-        // 5. screen 정보 설정
-        Object.defineProperty(screen, 'width', {{
-            get: () => {screen_info["width"]},
-            configurable: true
-        }});
-        Object.defineProperty(screen, 'height', {{
-            get: () => {screen_info["height"]},
-            configurable: true
-        }});
-        Object.defineProperty(window, 'devicePixelRatio', {{
-            get: () => {screen_info["pixelRatio"]},
-            configurable: true
-        }});
-        
-        // 6. permissions 쿼리 결과 조작
-        const originalQuery = window.navigator.permissions.query;
-        window.navigator.permissions.query = (parameters) => (
-            parameters.name === 'notifications' ?
-                Promise.resolve({{ state: Notification.permission }}) :
-                originalQuery(parameters)
-        );
-        
-        // 7. chrome 객체 재정의
-        delete window.chrome;
-        window.chrome = {{
-            runtime: {{
-                onConnect: undefined,
-                onMessage: undefined
-            }},
-            loadTimes: function() {{
-                return {{
-                    requestTime: Date.now() / 1000 - Math.random(),
-                    startLoadTime: Date.now() / 1000 - Math.random(),
-                    commitLoadTime: Date.now() / 1000 - Math.random(),
-                    finishDocumentLoadTime: Date.now() / 1000 - Math.random(),
-                    finishLoadTime: Date.now() / 1000 - Math.random(),
-                    firstPaintTime: Date.now() / 1000 - Math.random(),
-                    firstPaintAfterLoadTime: 0,
-                    navigationType: "Other",
-                    wasFetchedViaSpdy: false,
-                    wasNpnNegotiated: false,
-                    npnNegotiatedProtocol: "unknown",
-                    wasAlternateProtocolAvailable: false,
-                    connectionInfo: "http/1.1"
-                }};
-            }},
-            csi: function() {{
-                return {{
-                    pageT: Date.now(),
-                    startE: Date.now() - Math.random() * 1000,
-                    tran: 15
-                }};
-            }},
-            app: {{
-                isInstalled: false,
-                InstallState: {{
-                    DISABLED: "disabled",
-                    INSTALLED: "installed",
-                    NOT_INSTALLED: "not_installed"
-                }},
-                RunningState: {{
-                    CANNOT_RUN: "cannot_run",
-                    READY_TO_RUN: "ready_to_run",
-                    RUNNING: "running"
+                // 4. 기본적인 chrome 객체만 (너무 복잡하지 않게)
+                if (!window.chrome) {{
+                    window.chrome = {{
+                        runtime: {{}}
+                    }};
                 }}
+        
+                // 5. Selenium 관련 변수들만 제거
+                delete window.document.$cdc_asdjflasutopfhvcZLmcfl_;
+                delete window.$chrome_asyncScriptInfo;
+                delete window.$cdc_asdjflasutopfhvcZLmcfl_;
+        
+                // 6. 가벼운 타이밍 지연만 (과도하지 않게)
+                setTimeout(() => {{}}, Math.random() * 50);
+        
+            }} catch (error) {{
+                // 조용히 무시 (로그도 남기지 않음)
             }}
-        }};
-        
-        // 8. Function.prototype.toString 보호
-        const originalToString = Function.prototype.toString;
-        Function.prototype.toString = function() {{
-            if (this === navigator.webdriver) {{
-                return 'function webdriver() {{ [native code] }}';
-            }}
-            return originalToString.apply(this, arguments);
-        }};
-        
-        // 9. Object.getOwnPropertyDescriptor 보호
-        const originalGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
-        Object.getOwnPropertyDescriptor = function(obj, prop) {{
-            if (prop === 'webdriver' && obj === navigator) {{
-                return undefined;
-            }}
-            return originalGetOwnPropertyDescriptor.apply(this, arguments);
-        }};
-        
-        // 10. 콘솔 정리
-        console.clear();
-        
-        // 11. 추가 보호 - Selenium 관련 변수들
-        delete window.document.$cdc_asdjflasutopfhvcZLmcfl_;
-        delete window.$chrome_asyncScriptInfo;
-        delete window.$cdc_asdjflasutopfhvcZLmcfl_;
-        
-        // 12. 타이밍 공격 방지
-        const start = Date.now();
-        while (Date.now() - start < Math.random() * 100) {{
-            // 랜덤한 지연시간 추가
-        }}
+        }})();
+        """
+
+    def get_minimal_bypass_script(self) -> str:
+        """최소한의 핵심 우회 기능만 - 카페 댓글 관리용"""
+        return """
+        (function() {
+            try {
+                // 1. 가장 중요한 것만: navigator.webdriver 제거
+                Object.defineProperty(navigator, 'webdriver', {
+                    get: () => undefined,
+                    configurable: true
+                });
+                
+                // 2. 기본 Selenium 변수들만 제거
+                delete window.document.$cdc_asdjflasutopfhvcZLmcfl_;
+                delete window.$chrome_asyncScriptInfo;
+                
+                // 3. 기본 chrome 객체 (있으면 자연스럽게)
+                if (!window.chrome) {
+                    window.chrome = { runtime: {} };
+                }
+                
+            } catch (e) {
+                // 조용히 무시
+            }
+        })();
         """
 
     def get_client_hints_headers(self) -> Dict[str, str]:
@@ -359,6 +283,25 @@ class BrowserFingerprintManager:
             return '"6.5.0"'  # Linux kernel version
 
 
+def create_minimal_browser_profile() -> Dict:
+    """최소한의 브라우저 프로필 생성 - 카페 댓글 관리용"""
+    ua_manager = UserAgentManager()
+    fingerprint_manager = BrowserFingerprintManager(ua_manager)
+
+    user_agent = ua_manager.generate_user_agent(randomize=False)  # 고정된 UA 사용
+    bypass_script = fingerprint_manager.get_minimal_bypass_script()  # 간단한 우회만
+
+    logger.info(f"간단한 User-Agent: {user_agent}")
+    logger.info(f"현재 OS: {ua_manager.current_os}")
+
+    return {
+        "user_agent": user_agent,
+        "bypass_script": bypass_script,
+        "navigator_languages": ua_manager.get_navigator_languages(),
+        "platform_info": ua_manager.get_platform_info(),
+    }
+
+
 def create_enhanced_browser_profile() -> Dict:
     """강화된 브라우저 프로필 생성"""
     ua_manager = UserAgentManager()
@@ -384,8 +327,14 @@ def create_enhanced_browser_profile() -> Dict:
 
 # 사용 예시
 if __name__ == "__main__":
-    profile = create_enhanced_browser_profile()
-    print("=== 브라우저 프로필 ===")
-    for key, value in profile.items():
+    print("=== 간단한 브라우저 프로필 (권장) ===")
+    minimal_profile = create_minimal_browser_profile()
+    for key, value in minimal_profile.items():
+        if key != "bypass_script":
+            print(f"{key}: {value}")
+
+    print("\n=== 고급 브라우저 프로필 (과도할 수 있음) ===")
+    enhanced_profile = create_enhanced_browser_profile()
+    for key, value in enhanced_profile.items():
         if key != "bypass_script":  # 스크립트는 너무 길어서 제외
             print(f"{key}: {value}")
