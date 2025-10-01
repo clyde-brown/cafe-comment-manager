@@ -5,6 +5,8 @@
 """
 
 import logging
+import threading
+import re
 import time
 from typing import Dict, Any, Optional
 
@@ -263,6 +265,7 @@ class BrowserService:
     @staticmethod
     def login_to_naver(
         username: str = "yki2k", password: str = "zmfpdlwl94@"
+        # username: str = "tngus_0314", password: str = "xmslfm123!"
     ) -> Dict[str, Any]:
         """
         네이버 자동 로그인 함수
@@ -274,7 +277,49 @@ class BrowserService:
         Returns:
             Dict: 로그인 결과
         """
+        # 🔍 디버그: 호출 정보 로깅
+        import inspect
+
+        caller_frame = inspect.currentframe().f_back
+        caller_info = f"{caller_frame.f_code.co_filename}:{caller_frame.f_lineno}"
+
+        logger.info(f"🔍 login_to_naver 호출됨")
+        logger.info(f"🔍 계정: {username}")
+        logger.info(f"🔍 호출자: {caller_info}")
+        logger.info(f"🔍 스레드 ID: {threading.current_thread().ident}")
+
         login_success = False
+
+        # 🔍 디버그: 값 비교 및 분석
+        logger.info(f"🔍 받은 username: '{username}'")
+        logger.info(f"🔍 username 타입: {type(username)}")
+        logger.info(f"🔍 username 길이: {len(username)}")
+        logger.info(f"🔍 username repr: {repr(username)}")
+        logger.info(f"🔍 username 바이트: {username.encode('utf-8')}")
+
+        # 하드코딩된 값과 비교
+        hardcoded = "yki2k"
+        logger.info(f"🔍 하드코딩: '{hardcoded}'")
+        logger.info(f"🔍 같은가? {username == hardcoded}")
+        logger.info(f"🔍 strip 후 같은가? {username.strip() == hardcoded}")
+
+        # 비밀번호도 확인
+        logger.info(f"🔍 받은 password 길이: {len(password)}")
+        logger.info(f"🔍 password repr: {repr(password)}")
+
+        # 🔧 문자엱 강력 정리 (모든 제어문자 제거)
+        import re
+
+        # 모든 제어문자와 공백 제거
+        username = re.sub(r"[\r\n\t\x00-\x1f\x7f-\x9f]", "", username).strip()
+        password = re.sub(r"[\r\n\t\x00-\x1f\x7f-\x9f]", "", password).strip()
+
+        # _x000d_ 같은 특수 문자열도 제거
+        password = re.sub(r"_x[0-9a-fA-F]{4}_", "", password)
+
+        logger.info(f"✅ 강력 정리 후 username: '{username}'")
+        logger.info(f"✅ 강력 정리 후 password repr: {repr(password)}")
+        logger.info(f"✅ 강력 정리 후 password 길이: {len(password)}")
 
         try:
             # 격리된 브라우저 컨트롤러 사용 (계정별 완전 세션 분리)
@@ -285,31 +330,38 @@ class BrowserService:
                 # 네이버 로그인 페이지로 이동 (먼저 페이지 로드)
                 title = browser.navigate_to(NAVER_LOGIN_URL)
 
-                # 페이지 로드 후 캐시 및 쿠키 정리 (안전하게)
-                try:
-                    # 쿠키만 안전하게 정리
-                    browser.driver.delete_all_cookies()
+                # 🚨 쿠키/캐시 정리 비활성화 (캡챠 원인!) --- 자동 로그인 의심
 
-                    # localStorage와 sessionStorage는 조건부로 정리
-                    browser.driver.execute_script(
-                        """
-                        try {
-                            if (typeof(Storage) !== "undefined" && window.location.protocol !== 'data:') {
-                                window.localStorage.clear();
-                                window.sessionStorage.clear();
-                                console.log('Storage cleared successfully');
-                            }
-                        } catch (e) {
-                            console.log('Storage clear skipped:', e.message);
-                        }
-                    """
-                    )
-                    logger.info("브라우저 캐시 정리 완료")
-                except Exception as e:
-                    logger.warning(f"캐시 정리 중 오류 (무시됨): {e}")
+                # 이유: 쿠키를 삭제하면 네이버가 "의심스러운 활동"으로 판단
+                # IsolatedBrowserController가 이미 임시 프로필을 사용하므로
+                # 추가 정리가 불필요하며, 오히려 캡챠를 유발함
+
+                # try:
+                #     # 쿠키만 안전하게 정리
+                #     browser.driver.delete_all_cookies()
+                #
+                #     # localStorage와 sessionStorage는 조건부로 정리
+                #     browser.driver.execute_script(
+                #         """
+                #         try {
+                #             if (typeof(Storage) !== "undefined" && window.location.protocol !== 'data:') {
+                #                 window.localStorage.clear();
+                #                 window.sessionStorage.clear();
+                #                 console.log('Storage cleared successfully');
+                #             }
+                #         } catch (e) {
+                #             console.log('Storage clear skipped:', e.message);
+                #         }
+                #     """
+                #     )
+                #     logger.info("브라우저 캐시 정리 완료")
+                # except Exception as e:
+                #     logger.warning(f"캐시 정리 중 오류 (무시됨): {e}")
+
+                logger.info("쿠키/캐시 정리 생략 (캡챠 방지)")
 
                 # 추가 대기 시간 (페이지 안정화)
-                time.sleep(1)
+                time.sleep(2)  # 1초 → 2초로 증가
 
                 # 1. 로그인 페이지 (주석 처리)
                 time.sleep(1)

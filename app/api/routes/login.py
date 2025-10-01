@@ -10,6 +10,7 @@ from datetime import datetime
 from typing import Dict, List
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 import logging
+from functools import partial
 
 from app.models.account import (
     AccountInfo,
@@ -45,14 +46,18 @@ async def login_single_account(request: SingleLoginRequest):
     try:
         logger.info(f"단일 로그인 시작: {request.username}")
 
-        # 네이버 로그인 실행 (비동기 처리로 변경)
+        # 네이버 로그인 실행 (비동기 처리)
+        # 🔍 디버그: request 값 확인
+        logger.info(f"🔍 Request username: '{request.username}'")
+        logger.info(f"🔍 Request password 길이: {len(request.password)}")
+        
         loop = asyncio.get_event_loop()
-        result = await loop.run_in_executor(
-            None,
-            lambda: BrowserService.login_to_naver(
-                username=request.username, password=request.password
-            ),
+        login_func = partial(
+            BrowserService.login_to_naver,
+            username=request.username,
+            password=request.password
         )
+        result = await loop.run_in_executor(None, login_func)
 
         # 결과 분석
         if result.get("success", False):

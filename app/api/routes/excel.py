@@ -7,6 +7,8 @@
 from fastapi import APIRouter, File, UploadFile, HTTPException
 import pandas as pd
 import io
+import re
+import logging
 from typing import Dict, Any
 
 from app.core.config import settings
@@ -22,6 +24,9 @@ from app.models.excel import (
 )
 
 router = APIRouter(prefix="/excel", tags=["Excel"])
+
+# 로깅 설정
+logger = logging.getLogger(__name__)
 
 
 @router.post("/upload", response_model=ExcelUploadResponse)
@@ -68,8 +73,45 @@ async def upload_excel(file: UploadFile = File(...)):
             )
             columns_info.append(col_info)
 
-        # 데이터를 JSON 직렬화 가능한 형태로 변환
-        data_records = df.fillna("").to_dict("records")
+        # 🔧 데이터 정리: 캐리지 리턴 및 제어문자 제거
+        logger.info(f"📊 Excel 데이터 정리 시작 - 행: {len(df)}, 열: {len(df.columns)}")
+
+        def clean_text_data(value):
+            """텍스트 데이터에서 제어문자 제거"""
+            if pd.isna(value) or value == "":
+                return ""
+
+            text = str(value)
+            original_length = len(text)
+
+            # 모든 제어문자 제거 (\r, \n, \t, null 등)
+            cleaned = re.sub(r"[\r\n\t\x00-\x1f\x7f-\x9f]", "", text)
+
+            # _x000d_ 같은 특수 인코딩 제거
+            cleaned = re.sub(r"_x[0-9a-fA-F]{4}_", "", cleaned)
+
+            # 앞뒤 공백 제거
+            cleaned = cleaned.strip()
+
+            # 정리된 경우 로그 출력
+            if len(cleaned) != original_length:
+                logger.info(
+                    f"🧹 데이터 정리: '{text[:20]}...' → '{cleaned[:20]}...' (길이: {original_length} → {len(cleaned)})"
+                )
+
+            return cleaned
+
+        # DataFrame의 모든 텍스트 데이터 정리
+        cleaned_df = df.copy()
+        for col in cleaned_df.columns:
+            if cleaned_df[col].dtype == "object":  # 텍스트 컬럼만
+                logger.info(f"🔍 컬럼 '{col}' 정리 중...")
+                cleaned_df[col] = cleaned_df[col].apply(clean_text_data)
+
+        logger.info("✅ Excel 데이터 정리 완료")
+
+        # 정리된 데이터를 JSON 직렬화 가능한 형태로 변환
+        data_records = cleaned_df.fillna("").to_dict("records")
 
         # 기본 통계 정보
         stats = Statistics(
