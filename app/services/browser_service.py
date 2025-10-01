@@ -8,10 +8,13 @@ import logging
 import threading
 import re
 import time
+import random
+import numpy as np
 from typing import Dict, Any, Optional
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -33,6 +36,52 @@ logger = logging.getLogger(__name__)
 # 상수 정의
 DEFAULT_WAIT_TIMEOUT = 10
 NAVER_LOGIN_URL = "https://nid.naver.com/nidlogin.login"
+
+
+# 🎭 인간적 행동 시뮬레이션 함수들 (Phase 1 & 2)
+def gaussian_delay(
+    mean: float, std: float, min_val: float = 0.5, max_val: float = 10.0
+) -> float:
+    """가우시안 분포를 따르는 자연스러운 대기시간 생성"""
+    delay = np.random.normal(mean, std)
+    # 최소/최대값으로 클램핑
+    return max(min_val, min(max_val, delay))
+
+
+def human_typing(element, text: str):
+    """사람처럼 천천히 타이핑 (Phase 2)"""
+    logger.info(f"🎭 인간적 타이핑 시작: '{text[:5]}...'")
+
+    for i, char in enumerate(text):
+        element.send_keys(char)
+
+        # 타이핑 간격: 가우시안 분포 (평균 150ms, 표준편차 50ms)
+        typing_delay = gaussian_delay(0.15, 0.05, 0.08, 0.3)
+        time.sleep(typing_delay)
+
+        # 가끔 실수하고 백스페이스 (5% 확률)
+        if random.random() < 0.05 and i > 0:
+            logger.info("🤔 오타 수정 시뮬레이션")
+            time.sleep(gaussian_delay(0.2, 0.05))
+            element.send_keys(Keys.BACK_SPACE)
+            time.sleep(gaussian_delay(0.1, 0.02))
+            element.send_keys(char)
+
+    logger.info("✅ 인간적 타이핑 완료")
+
+
+def human_page_reading(mean: float = 3.0, std: float = 1.0):
+    """사람처럼 페이지 읽기 대기 (Phase 1)"""
+    reading_time = gaussian_delay(mean, std, 1.0, 8.0)
+    logger.info(f"📖 페이지 읽기 시뮬레이션: {reading_time:.2f}초")
+    time.sleep(reading_time)
+
+
+def human_thinking_pause(mean: float = 1.0, std: float = 0.3):
+    """사람처럼 생각하는 시간 (Phase 1)"""
+    thinking_time = gaussian_delay(mean, std, 0.3, 3.0)
+    logger.info(f"🤔 생각하는 시간: {thinking_time:.2f}초")
+    time.sleep(thinking_time)
 
 
 class BrowserController:
@@ -264,7 +313,8 @@ class BrowserService:
 
     @staticmethod
     def login_to_naver(
-        username: str = "yki2k", password: str = "zmfpdlwl94@"
+        username: str = "yki2k",
+        password: str = "zmfpdlwl94@",
         # username: str = "tngus_0314", password: str = "xmslfm123!"
     ) -> Dict[str, Any]:
         """
@@ -360,31 +410,37 @@ class BrowserService:
 
                 logger.info("쿠키/캐시 정리 생략 (캡챠 방지)")
 
-                # 추가 대기 시간 (페이지 안정화)
-                time.sleep(2)  # 1초 → 2초로 증가
+                # 🎭 Phase 1: 사람처럼 페이지 읽기 (가우시안 분포)
+                human_page_reading(mean=3.5, std=1.2)  # 평균 3.5초, 표준편차 1.2초
 
-                # 1. 로그인 페이지 (주석 처리)
-                time.sleep(1)
-
-                # 로그인 폼 요소 대기 및 입력
+                # 로그인 폼 요소 대기
+                logger.info("🔍 로그인 폼 찾는 중...")
                 username_field = browser.wait_for_element(By.ID, "id")
+
+                # 🎭 Phase 1: 아이디 입력 전 망설임
+                human_thinking_pause(mean=0.8, std=0.3)
+
+                # 🎭 Phase 2: 사람처럼 아이디 입력
                 username_field.clear()
-                username_field.send_keys(username)
-                logger.info("아이디 입력 완료")
+                human_typing(username_field, username)
+                logger.info("✅ 아이디 입력 완료")
 
-                # 2. 아이디 입력 후 (주석 처리)
-                time.sleep(1)
+                # 🎭 Phase 1: 비밀번호로 이동 전 잠시 대기
+                human_thinking_pause(mean=0.6, std=0.2)
 
-                # 패스워드 입력
+                # 비밀번호 필드 찾기
                 password_field = browser.driver.find_element(By.ID, "pw")
                 password_field.clear()
-                password_field.send_keys(password)
-                logger.info("패스워드 입력 완료")
 
-                # 3.패스워드 입력 후 (주석 처리)
-                time.sleep(1)
+                # 🎭 Phase 2: 사람처럼 비밀번호 입력
+                human_typing(password_field, password)
+                logger.info("✅ 패스워드 입력 완료")
+
+                # 🎭 Phase 1: 로그인 버튼 클릭 전 최종 확인 시간
+                human_thinking_pause(mean=1.2, std=0.4)
 
                 # 로그인 버튼 클릭
+                logger.info("🖱️ 로그인 버튼 클릭")
                 login_button = browser.driver.find_element(By.ID, "log.login")
                 login_button.click()
                 logger.info("로그인 버튼 클릭")
