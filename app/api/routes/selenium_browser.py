@@ -12,45 +12,6 @@ from app.services.browser_service import BrowserService
 
 router = APIRouter(prefix="/browser", tags=["Browser"])
 
-
-@router.post("/open-custom")
-async def open_custom_url_endpoint(
-    url: str = "https://www.naver.com", duration: int = 10
-):
-    """
-    사용자 지정 URL로 브라우저를 여는 API
-
-    Args:
-        url: 접속할 URL (기본값: 네이버)
-        duration: 브라우저를 열어둘 시간(초, 기본값: 10초)
-
-    Returns:
-        JSON: 실행 결과
-    """
-    try:
-        loop = asyncio.get_event_loop()
-        result = await loop.run_in_executor(
-            None, lambda: BrowserService.open_custom_url(url, duration)
-        )
-
-        if result["success"]:
-            return {
-                "status": "success",
-                "message": f"{url}에 {duration}초간 접속했습니다.",
-                "details": result,
-            }
-        else:
-            raise HTTPException(
-                status_code=500, detail=f"브라우저 실행 중 오류: {result['error']}"
-            )
-
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"사용자 지정 브라우저 실행 중 오류가 발생했습니다: {str(e)}",
-        )
-
-
 @router.post("/naver-login")
 async def naver_auto_login():
     """

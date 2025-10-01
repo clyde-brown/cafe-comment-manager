@@ -9,7 +9,6 @@ import threading
 import re
 import time
 import random
-import numpy as np
 from typing import Dict, Any, Optional
 
 from selenium import webdriver
@@ -28,6 +27,12 @@ from app.utils.browser_utils import (
     create_safe_filename,
 )
 from app.utils.advanced_browser_utils import create_isolated_browser_profile
+from app.utils.human_behavior import (
+    gaussian_delay,
+    human_typing,
+    human_page_reading,
+    human_thinking_pause,
+)
 
 # 로깅 설정
 logging.basicConfig(level=logging.INFO)
@@ -38,50 +43,7 @@ DEFAULT_WAIT_TIMEOUT = 10
 NAVER_LOGIN_URL = "https://nid.naver.com/nidlogin.login"
 
 
-# 🎭 인간적 행동 시뮬레이션 함수들 (Phase 1 & 2)
-def gaussian_delay(
-    mean: float, std: float, min_val: float = 0.5, max_val: float = 10.0
-) -> float:
-    """가우시안 분포를 따르는 자연스러운 대기시간 생성"""
-    delay = np.random.normal(mean, std)
-    # 최소/최대값으로 클램핑
-    return max(min_val, min(max_val, delay))
-
-
-def human_typing(element, text: str):
-    """사람처럼 천천히 타이핑 (Phase 2)"""
-    logger.info(f"🎭 인간적 타이핑 시작: '{text[:5]}...'")
-
-    for i, char in enumerate(text):
-        element.send_keys(char)
-
-        # 타이핑 간격: 가우시안 분포 (평균 150ms, 표준편차 50ms)
-        typing_delay = gaussian_delay(0.15, 0.05, 0.08, 0.3)
-        time.sleep(typing_delay)
-
-        # 가끔 실수하고 백스페이스 (5% 확률)
-        if random.random() < 0.05 and i > 0:
-            logger.info("🤔 오타 수정 시뮬레이션")
-            time.sleep(gaussian_delay(0.2, 0.05))
-            element.send_keys(Keys.BACK_SPACE)
-            time.sleep(gaussian_delay(0.1, 0.02))
-            element.send_keys(char)
-
-    logger.info("✅ 인간적 타이핑 완료")
-
-
-def human_page_reading(mean: float = 3.0, std: float = 1.0):
-    """사람처럼 페이지 읽기 대기 (Phase 1)"""
-    reading_time = gaussian_delay(mean, std, 1.0, 8.0)
-    logger.info(f"📖 페이지 읽기 시뮬레이션: {reading_time:.2f}초")
-    time.sleep(reading_time)
-
-
-def human_thinking_pause(mean: float = 1.0, std: float = 0.3):
-    """사람처럼 생각하는 시간 (Phase 1)"""
-    thinking_time = gaussian_delay(mean, std, 0.3, 3.0)
-    logger.info(f"🤔 생각하는 시간: {thinking_time:.2f}초")
-    time.sleep(thinking_time)
+# 🎭 인간적 행동 시뮬레이션은 app.utils.human_behavior 모듈로 분리됨
 
 
 class BrowserController:
@@ -272,46 +234,6 @@ class BrowserService:
     """브라우저 관련 비즈니스 로직을 처리하는 서비스 클래스"""
 
     @staticmethod
-    def open_custom_url(url: str, duration: int = 10) -> Dict[str, Any]:
-        """
-        사용자 지정 URL을 여는 함수
-
-        Args:
-            url: 접속할 URL
-            duration: 브라우저를 열어둘 시간(초)
-
-        Returns:
-            Dict: 실행 결과
-        """
-        try:
-            # URL 검증
-            if not validate_url(url):
-                raise ValueError("유효하지 않은 URL입니다.")
-
-            # Context Manager를 사용 (자원 관리 : 프로세스/소켓/파일 핸들 같은 외부 리소스를 안전하게 정리)
-            with BrowserController(headless=True, enable_images=False) as browser:
-                # 사용자 지정 URL로 이동
-                title = browser.navigate_to(url)
-
-                # 스크린샷 촬영 (주석 처리)
-                time.sleep(1)
-                safe_filename = create_safe_filename(url)
-
-                # 지정된 시간만큼 대기
-                time.sleep(duration)
-
-                return {
-                    "success": True,
-                    "url": url,
-                    "page_title": title,
-                    "duration": duration,
-                }
-
-        except Exception as e:
-            logger.error(f"사용자 지정 URL 브라우저 실행 중 오류: {e}")
-            return {"success": False, "error": str(e)}
-
-    @staticmethod
     def login_to_naver(
         username: str = "yki2k",
         password: str = "zmfpdlwl94@",
@@ -327,37 +249,6 @@ class BrowserService:
         Returns:
             Dict: 로그인 결과
         """
-        # 🔍 디버그: 호출 정보 로깅
-        import inspect
-
-        caller_frame = inspect.currentframe().f_back
-        caller_info = f"{caller_frame.f_code.co_filename}:{caller_frame.f_lineno}"
-
-        logger.info(f"🔍 login_to_naver 호출됨")
-        logger.info(f"🔍 계정: {username}")
-        logger.info(f"🔍 호출자: {caller_info}")
-        logger.info(f"🔍 스레드 ID: {threading.current_thread().ident}")
-
-        login_success = False
-
-        # 🔍 디버그: 값 비교 및 분석
-        logger.info(f"🔍 받은 username: '{username}'")
-        logger.info(f"🔍 username 타입: {type(username)}")
-        logger.info(f"🔍 username 길이: {len(username)}")
-        logger.info(f"🔍 username repr: {repr(username)}")
-        logger.info(f"🔍 username 바이트: {username.encode('utf-8')}")
-
-        # 하드코딩된 값과 비교
-        hardcoded = "yki2k"
-        logger.info(f"🔍 하드코딩: '{hardcoded}'")
-        logger.info(f"🔍 같은가? {username == hardcoded}")
-        logger.info(f"🔍 strip 후 같은가? {username.strip() == hardcoded}")
-
-        # 비밀번호도 확인
-        logger.info(f"🔍 받은 password 길이: {len(password)}")
-        logger.info(f"🔍 password repr: {repr(password)}")
-
-        # 🔧 문자엱 강력 정리 (모든 제어문자 제거)
         import re
 
         # 모든 제어문자와 공백 제거
@@ -366,10 +257,6 @@ class BrowserService:
 
         # _x000d_ 같은 특수 문자열도 제거
         password = re.sub(r"_x[0-9a-fA-F]{4}_", "", password)
-
-        logger.info(f"✅ 강력 정리 후 username: '{username}'")
-        logger.info(f"✅ 강력 정리 후 password repr: {repr(password)}")
-        logger.info(f"✅ 강력 정리 후 password 길이: {len(password)}")
 
         try:
             # 격리된 브라우저 컨트롤러 사용 (계정별 완전 세션 분리)
@@ -380,7 +267,7 @@ class BrowserService:
                 # 네이버 로그인 페이지로 이동 (먼저 페이지 로드)
                 title = browser.navigate_to(NAVER_LOGIN_URL)
 
-                # 🚨 쿠키/캐시 정리 비활성화 (캡챠 원인!) --- 자동 로그인 의심
+                # --- 쿠키/캐시 정리 비활성화 (캡챠 원인!) --- 자동 로그인 의심
 
                 # 이유: 쿠키를 삭제하면 네이버가 "의심스러운 활동"으로 판단
                 # IsolatedBrowserController가 이미 임시 프로필을 사용하므로
