@@ -365,6 +365,377 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* 🏠 카페 댓글 생성기 스타일 */
+        .ai-reaction-section {
+            margin-top: 40px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .ai-reaction-section .container {
+            background: white;
+            margin: 0;
+            max-width: none;
+        }
+
+        .section-header {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin: 0;
+        }
+
+        .section-header h2 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .section-description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .ai-content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+            min-height: 600px;
+        }
+
+        /* 왼쪽: 기사 입력 영역 */
+        .article-input-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            border: 2px solid #e9ecef;
+        }
+
+        .input-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .input-header h3 {
+            color: #495057;
+            font-size: 1.3rem;
+        }
+
+        .clear-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .clear-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+
+        .article-input-container {
+            margin-bottom: 20px;
+        }
+
+        #articleInput {
+            width: 100%;
+            height: 400px;
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        #articleInput:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .action-buttons {
+            text-align: center;
+        }
+
+        .analyze-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .analyze-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 오른쪽: 리액션 결과 영역 */
+        .reaction-results-section {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 25px;
+            border: 2px solid #e9ecef;
+        }
+
+        .results-header {
+            margin-bottom: 20px;
+        }
+
+        .results-header h3 {
+            color: #495057;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+        }
+
+        .results-info {
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+
+        .reaction-results-container {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        /* 빈 상태 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .empty-text {
+            font-size: 1.1rem;
+        }
+
+        /* 리액션 카드 */
+        .reaction-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            animation: slideInUp 0.5s ease-out;
+            transition: all 0.3s ease;
+        }
+
+        .reaction-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .reaction-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .reaction-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        .reaction-type {
+            color: #495057;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .reaction-result {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .reaction-details {
+            color: #495057;
+            line-height: 1.6;
+        }
+
+        .reaction-detail-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reaction-detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .reaction-detail-item:hover {
+            background: #f8f9fa;
+            padding-left: 10px;
+            border-radius: 4px;
+        }
+
+        /* 에러 상태 */
+        .reaction-error {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            background: #f8d7da;
+            color: #721c24;
+            border-radius: 8px;
+            border: 1px solid #f5c6cb;
+        }
+
+        .error-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        .error-message {
+            font-weight: 500;
+        }
+
+        /* 로딩 스타일 */
+        #reactionLoading {
+            text-align: center;
+            padding: 20px;
+            background: #e3f2fd;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        #reactionLoading .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #e3f2fd;
+            border-top: 3px solid #2196f3;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        #reactionLoading p {
+            color: #1976d2;
+            font-weight: 500;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .ai-content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .section-header h2 {
+                font-size: 1.8rem;
+            }
+
+            #articleInput {
+                height: 300px;
+            }
+
+            .analyze-btn {
+                width: 100%;
+                padding: 12px 20px;
+            }
+
+            .reaction-card {
+                padding: 15px;
+            }
+        }
+
+        /* 카페 댓글 전용 스타일 */
+        .comment-card {
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .comment-content {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .analysis-card {
+            border-left: 4px solid #4ecdc4;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+        }
+
+        .processing-time {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .copy-notification {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* 댓글 스타일별 색상 구분 */
+        .comment-card:nth-child(2) { border-left-color: #ff6b6b; } /* 공감형 */
+        .comment-card:nth-child(3) { border-left-color: #4ecdc4; } /* 질문형 */
+        .comment-card:nth-child(4) { border-left-color: #45b7d1; } /* 조언형 */
+        .comment-card:nth-child(5) { border-left-color: #96ceb4; } /* 친근형 */
+        .comment-card:nth-child(6) { border-left-color: #feca57; } /* 경험공유형 */
     </style>
 </head>
 <body>
@@ -429,6 +800,72 @@
             
             <div class="error" id="errorMessage" style="display: none;">
                 <!-- 에러 메시지가 여기에 표시됩니다 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 🤖 기사 리액션 AI 봇 섹션 -->
+    <div class="ai-reaction-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>🏠 카페 댓글 자동 생성기</h2>
+                <p class="section-description">카페 게시글을 입력하면 AI가 자연스러운 댓글을 자동으로 생성해드립니다. 다양한 스타일의 댓글로 카페 활동을 더욱 활발하게!</p>
+            </div>
+
+            <div class="ai-content-wrapper">
+                <!-- 왼쪽: 기사 입력 영역 -->
+                <div class="article-input-section">
+                    <div class="input-header">
+                        <h3>📝 카페 게시글 입력</h3>
+                        <button type="button" class="clear-btn" onclick="clearArticle()">🗑️ 초기화</button>
+                    </div>
+                    
+                    <div class="article-input-container">
+                        <textarea 
+                            id="articleInput" 
+                            placeholder="댓글을 달고 싶은 카페 게시글을 여기에 붙여넣어 주세요...
+
+예시:
+제목: 직장 상사와의 갈등으로 고민입니다 😢
+
+안녕하세요 카페 회원 여러분..
+요즘 직장에서 상사와 갈등이 심해져서 너무 스트레스받고 있어요.
+매일 작은 일로도 지적받고, 다른 동료들 앞에서 망신당하기도 하고..
+이직을 고려하고 있는데 경력이 짧아서 쉽지 않을 것 같아요.
+비슷한 경험 있으신 분들 조언 부탁드려요 ㅠㅠ"
+                            rows="20"
+                        ></textarea>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="button" id="analyzeBtn" class="analyze-btn" onclick="analyzeArticle()">
+                            🏠 카페 댓글 생성
+                        </button>
+                    </div>
+
+                    <div class="loading" id="reactionLoading" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>AI가 카페 댓글을 생성하고 있습니다...</p>
+                    </div>
+                </div>
+
+                <!-- 오른쪽: 리액션 결과 영역 -->
+                <div class="reaction-results-section">
+                    <div class="results-header">
+                        <h3>💬 생성된 카페 댓글</h3>
+                        <div class="results-info">
+                            댓글 생성이 완료되면 여기에 결과가 표시됩니다
+                        </div>
+                    </div>
+                    
+                    <div class="reaction-results-container" id="reactionResults">
+                        <!-- AI 분석 결과가 여기에 표시됩니다 -->
+                        <div class="empty-state">
+                            <div class="empty-icon">🤖</div>
+                            <div class="empty-text">카페 게시글을 입력하고 댓글 생성 버튼을 눌러주세요</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -634,12 +1071,12 @@
                         <td class="error-cell">${errorMsg}</td>
                     </tr>
                 `;
-            });
+                });
+                
+                tableHTML += '</tbody>';
+                dataTable.innerHTML = tableHTML;
+            }
             
-            tableHTML += '</tbody>';
-            dataTable.innerHTML = tableHTML;
-        }
-        
         function getStatusBadge(status) {
             const badges = {
                 'idle': '<span class="status-badge status-idle">대기</span>',
@@ -832,7 +1269,7 @@
                 console.log('ℹ️', message);
             }
         }
-
+        
         function showLoading(show) {
             document.getElementById('loading').style.display = show ? 'block' : 'none';
         }
@@ -926,6 +1363,304 @@
             } finally {
                 naverLoading.style.display = 'none';
             }
+        }
+
+        // 🏠 카페 댓글 자동 생성 관련 함수들
+        async function analyzeArticle() {
+            const articleText = document.getElementById('articleInput').value.trim();
+            const reactionContainer = document.getElementById('reactionResults');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const loadingDiv = document.getElementById('reactionLoading');
+
+            if (!articleText) {
+                showReactionError('카페 게시글 내용을 입력해주세요.');
+                return;
+            }
+
+            // 버튼 비활성화 및 로딩 표시
+            analyzeBtn.disabled = true;
+            analyzeBtn.textContent = '댓글 생성 중...';
+            loadingDiv.style.display = 'block';
+            reactionContainer.innerHTML = '';
+
+            try {
+                // 실제 API 호출 (개발 중에는 모의 데이터 사용)
+                const mockComments = generateMockCafeComments(articleText);
+                displayCafeComments(mockComments);
+                
+                // 실제 API 호출 코드 (주석 해제하여 사용)
+                /*
+                const response = await fetch('/api/cafe/comments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        article_text: articleText,
+                        comment_styles: ["공감형", "질문형", "조언형", "친근형", "경험공유형"],
+                        max_comments: 5,
+                        tone_style: "친근한톤"
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayCafeComments(data);
+                } else {
+                    showReactionError(data.message || '댓글 생성 중 오류가 발생했습니다.');
+                }
+                */
+                
+            } catch (error) {
+                console.error('댓글 생성 오류:', error);
+                showReactionError('댓글 생성 중 오류가 발생했습니다.');
+            } finally {
+                // 버튼 재활성화
+                analyzeBtn.disabled = false;
+                analyzeBtn.textContent = '🏠 카페 댓글 생성';
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        function generateMockCafeComments(postContent) {
+            // 게시글 내용에 따라 적절한 댓글 생성
+            let comments = [];
+            
+            if (postContent.includes('고민') || postContent.includes('스트레스') || postContent.includes('힘들')) {
+                comments = [
+                    { style: '공감형', icon: '👍', content: '정말 힘드시겠어요 ㅠㅠ 저도 비슷한 경험이 있어서 마음이 아프네요. 힘내세요!' },
+                    { style: '질문형', icon: '❓', content: '혹시 HR팀이나 상급자에게 상담을 요청해보신 적은 있나요?' },
+                    { style: '조언형', icon: '💡', content: '상사와의 일대일 대화를 통해 오해를 풀어보시는 것도 좋을 것 같아요. 차분하게 대화해보세요.' },
+                    { style: '친근형', icon: '😊', content: '많이 속상하셨을 것 같아요. 저희가 응원하고 있으니까 너무 스트레스 받지 마세요 💪' },
+                    { style: '경험공유형', icon: '🤝', content: '저도 예전에 비슷한 일이 있었는데, 시간이 지나면서 관계가 개선되더라고요. 포기하지 마세요!' }
+                ];
+            } else if (postContent.includes('맛집') || postContent.includes('추천') || postContent.includes('맛있')) {
+                comments = [
+                    { style: '공감형', icon: '👍', content: '와 정말 맛있어 보이네요! 사진만 봐도 군침이 도네요 🤤' },
+                    { style: '질문형', icon: '❓', content: '혹시 가격대는 어느 정도인가요? 그리고 예약이 필요한가요?' },
+                    { style: '조언형', icon: '💡', content: '좋은 정보 감사해요! 다음에 강남 가면 꼭 가봐야겠어요 ⭐' },
+                    { style: '친근형', icon: '😊', content: '맛집 정보 공유해주셔서 감사해요! 데이트 코스로 딱 좋겠네요 💕' },
+                    { style: '경험공유형', icon: '🤝', content: '저도 이탈리안 음식 좋아하는데 꼭 가봐야겠어요! 추천 감사합니다 🍝' }
+                ];
+            } else if (postContent.includes('노트북') || postContent.includes('구매') || postContent.includes('추천')) {
+                comments = [
+                    { style: '공감형', icon: '👍', content: '노트북 선택 정말 어려우시겠어요! 저도 고민 많이 했었는데 이해해요 😅' },
+                    { style: '질문형', icon: '❓', content: '혹시 들고 다니실 일이 많으신가요? 무게도 중요한 고려사항이에요!' },
+                    { style: '조언형', icon: '💡', content: '용도 보시면 맥북보다는 윈도우 노트북이 더 실용적일 것 같아요. 게임도 고려하시니까요!' },
+                    { style: '친근형', icon: '😊', content: '대학생이시면 학생 할인도 알아보세요! 꽤 할인 폭이 커요 💻' },
+                    { style: '경험공유형', icon: '🤝', content: '저는 LG 그램 쓰는데 가볍고 배터리도 오래가서 만족해요! 참고하세요 😊' }
+                ];
+            } else if (postContent.includes('첫 출근') || postContent.includes('새로운') || postContent.includes('시작')) {
+                comments = [
+                    { style: '공감형', icon: '👍', content: '첫 출근 정말 축하드려요! 새로운 시작이라 설레시겠어요 🎉' },
+                    { style: '질문형', icon: '❓', content: '어떤 분야 회사인가요? 첫날 분위기는 어떠셨어요?' },
+                    { style: '조언형', icon: '💡', content: '처음엔 적응하기 어려우실 수 있지만 금방 익숙해지실 거예요! 화이팅!' },
+                    { style: '친근형', icon: '😊', content: '동료분들이 친절하시다니 다행이네요! 좋은 직장 만나신 것 같아요 💪' },
+                    { style: '경험공유형', icon: '🤝', content: '저도 첫 출근 때 떨렸는데 지금은 잘 적응했어요! 응원할게요 화이팅! 🔥' }
+                ];
+            } else {
+                comments = [
+                    { style: '공감형', icon: '👍', content: '좋은 글 잘 읽었어요! 공감되는 부분이 많네요 😊' },
+                    { style: '질문형', icon: '❓', content: '혹시 더 자세한 이야기도 들려주실 수 있나요?' },
+                    { style: '조언형', icon: '💡', content: '좋은 정보 공유해주셔서 감사해요! 도움이 많이 됐어요' },
+                    { style: '친근형', icon: '😊', content: '글 잘 읽었습니다! 좋은 하루 되세요 ✨' },
+                    { style: '경험공유형', icon: '🤝', content: '저도 비슷한 생각을 하고 있었는데 공감이 많이 되네요!' }
+                ];
+            }
+
+            return {
+                success: true,
+                post_analysis: "게시글 분석이 완료되었습니다.",
+                comments: comments,
+                processing_time: 1.5,
+                message: "카페 댓글 5개가 성공적으로 생성되었습니다."
+            };
+        }
+
+        function generateMockReactions(articleText) {
+            const reactions = [
+                {
+                    type: '감정 분석',
+                    icon: '😊',
+                    result: '긍정적 (85%)',
+                    details: '이 기사는 전반적으로 긍정적인 톤을 가지고 있으며, 희망적인 메시지를 전달합니다.'
+                },
+                {
+                    type: '키워드 추출',
+                    icon: '🔍',
+                    result: '혁신, 기술, 발전, 미래',
+                    details: '주요 키워드들이 기술 혁신과 미래 발전에 관련된 내용임을 보여줍니다.'
+                },
+                {
+                    type: '댓글 제안',
+                    icon: '💬',
+                    result: '3개의 댓글 생성됨',
+                    details: [
+                        '정말 흥미로운 내용이네요! 앞으로의 발전이 기대됩니다. 👍',
+                        '이런 혁신적인 기술이 우리 생활에 어떤 변화를 가져올지 궁금하네요.',
+                        '기사 잘 읽었습니다. 더 자세한 정보가 있으면 좋겠어요! 📚'
+                    ]
+                },
+                {
+                    type: '요약',
+                    icon: '📝',
+                    result: '3줄 요약',
+                    details: [
+                        '• 새로운 기술 혁신이 주목받고 있음',
+                        '• 향후 산업 전반에 긍정적 영향 예상',
+                        '• 지속적인 연구 개발이 필요한 상황'
+                    ]
+                },
+                {
+                    type: '관련 질문',
+                    icon: '❓',
+                    result: '추천 질문 5개',
+                    details: [
+                        '이 기술의 상용화 시기는 언제쯤 예상되나요?',
+                        '기존 기술과 비교했을 때 어떤 장점이 있나요?',
+                        '도입 시 예상되는 비용은 어느 정도인가요?',
+                        '보안이나 안전성 측면에서는 어떤가요?',
+                        '일반 사용자도 쉽게 접근할 수 있을까요?'
+                    ]
+                }
+            ];
+
+            return reactions;
+        }
+
+        function displayCafeComments(data) {
+            const container = document.getElementById('reactionResults');
+            
+            // 게시글 분석 결과 표시
+            const analysisCard = document.createElement('div');
+            analysisCard.className = 'reaction-card analysis-card';
+            analysisCard.innerHTML = `
+                <div class="reaction-header">
+                    <span class="reaction-icon">📊</span>
+                    <span class="reaction-type">게시글 분석</span>
+                    <span class="reaction-result">${data.message}</span>
+                </div>
+                <div class="reaction-details">
+                    <div class="reaction-detail-item">${data.post_analysis}</div>
+                </div>
+            `;
+            container.appendChild(analysisCard);
+
+            // 댓글들 표시
+            data.comments.forEach((comment, index) => {
+                const commentCard = document.createElement('div');
+                commentCard.className = 'reaction-card comment-card';
+                commentCard.style.animationDelay = `${(index + 1) * 0.1}s`;
+
+                commentCard.innerHTML = `
+                    <div class="reaction-header">
+                        <span class="reaction-icon">${comment.icon}</span>
+                        <span class="reaction-type">${comment.style}</span>
+                        <button class="copy-btn" onclick="copyComment('${comment.content.replace(/'/g, "\\'")}')">📋 복사</button>
+                    </div>
+                    <div class="reaction-details">
+                        <div class="comment-content">${comment.content}</div>
+                    </div>
+                `;
+                
+                container.appendChild(commentCard);
+            });
+
+            // 처리 시간 표시
+            const timeInfo = document.createElement('div');
+            timeInfo.className = 'processing-time';
+            timeInfo.textContent = `처리 시간: ${data.processing_time}초`;
+            container.appendChild(timeInfo);
+        }
+
+        function copyComment(commentText) {
+            navigator.clipboard.writeText(commentText).then(() => {
+                // 복사 성공 알림
+                const notification = document.createElement('div');
+                notification.className = 'copy-notification';
+                notification.textContent = '댓글이 클립보드에 복사되었습니다!';
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #4CAF50;
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    z-index: 1000;
+                    animation: slideIn 0.3s ease-out;
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 2000);
+            }).catch(err => {
+                console.error('복사 실패:', err);
+                alert('댓글 복사에 실패했습니다.');
+            });
+        }
+
+        function displayReactions(reactions) {
+            const container = document.getElementById('reactionResults');
+            
+            reactions.forEach((reaction, index) => {
+                const reactionCard = document.createElement('div');
+                reactionCard.className = 'reaction-card';
+                reactionCard.style.animationDelay = `${index * 0.1}s`;
+
+                let detailsHtml = '';
+                if (Array.isArray(reaction.details)) {
+                    detailsHtml = reaction.details.map(detail => `<div class="reaction-detail-item">${detail}</div>`).join('');
+                } else {
+                    detailsHtml = `<div class="reaction-detail-item">${reaction.details}</div>`;
+                }
+
+                reactionCard.innerHTML = `
+                    <div class="reaction-header">
+                        <span class="reaction-icon">${reaction.icon}</span>
+                        <h4 class="reaction-type">${reaction.type}</h4>
+                    </div>
+                    <div class="reaction-result">${reaction.result}</div>
+                    <div class="reaction-details">
+                        ${detailsHtml}
+                    </div>
+                `;
+
+                container.appendChild(reactionCard);
+            });
+        }
+
+        function showReactionError(message) {
+            const container = document.getElementById('reactionResults');
+            container.innerHTML = `
+                <div class="reaction-error">
+                    <span class="error-icon">⚠️</span>
+                    <span class="error-message">${message}</span>
+                </div>
+            `;
+        }
+
+        function clearArticle() {
+            document.getElementById('articleInput').value = '';
+            document.getElementById('reactionResults').innerHTML = '';
+        }
+
+        function copyReaction(element) {
+            const text = element.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                // 복사 완료 피드백
+                const originalText = element.innerHTML;
+                element.innerHTML = '✅ 복사됨!';
+                element.style.background = '#4CAF50';
+                
+                setTimeout(() => {
+                    element.innerHTML = originalText;
+                    element.style.background = '';
+                }, 1500);
+            });
         }
     </script>
 </body>
