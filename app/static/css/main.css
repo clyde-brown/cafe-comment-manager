@@ -224,3 +224,556 @@ h1 {
         padding: 1.5rem 0.8rem;
     }
 }
+
+/* ========================================
+   🔍 키워드 확장 섹션 스타일
+   ======================================== */
+
+.keyword-expansion-section {
+    padding: 3rem 0;
+    background: rgba(255, 255, 255, 0.08);
+    margin: 3rem 0;
+    border-radius: 25px;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.3);
+}
+
+.keyword-expansion-section .container {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    padding: 2rem;
+}
+
+.keyword-expansion-section .section-header h2 {
+    color: white;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.keyword-expansion-section .section-description {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+.keyword-content-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    margin-top: 2.5rem;
+    align-items: start;
+}
+
+/* 키워드 입력 영역 */
+.keyword-input-section {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 2rem;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 25px 0 rgba(31, 38, 135, 0.3);
+    transition: all 0.3s ease;
+}
+
+.keyword-input-section:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px 0 rgba(31, 38, 135, 0.4);
+}
+
+.keyword-input-section .input-header h3,
+.keyword-results-section .results-header h3 {
+    color: white;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.keyword-results-section .results-info {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.keyword-input-container {
+    margin: 1rem 0;
+}
+
+.keyword-input {
+    width: 100%;
+    padding: 1.2rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.keyword-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.keyword-input:focus {
+    outline: none;
+    border-color: #4CAF50;
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
+    transform: translateY(-1px);
+}
+
+.keyword-count-selector {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.keyword-count-selector label {
+    font-size: 0.9rem;
+}
+
+.count-select {
+    padding: 0.5rem;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.count-select:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+.count-select option {
+    background: #667eea;
+    color: white;
+}
+
+/* 액션 버튼 영역 */
+.keyword-input-section .action-buttons {
+    display: flex !important;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    justify-content: center;
+    text-align: center !important;
+    flex-wrap: wrap;
+}
+
+.keyword-input-section .expand-btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%) !important;
+    color: white !important;
+    padding: 1.2rem 2.5rem !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-size: 1.1rem !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4) !important;
+    min-width: 160px;
+}
+
+.keyword-input-section .expand-btn:hover:not(:disabled) {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.5) !important;
+}
+
+.keyword-input-section .expand-btn:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+}
+
+.keyword-input-section .clear-btn {
+    background: linear-gradient(135deg, #FF6B6B 0%, #EE5A52 100%) !important;
+    color: white !important;
+    padding: 1.2rem 2rem !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-size: 1.1rem !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4) !important;
+    min-width: 120px;
+}
+
+.keyword-input-section .clear-btn:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5) !important;
+}
+
+/* 로딩 상태 */
+.keyword-input-section .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+    padding: 2rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.keyword-input-section .loading .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    border-top: 4px solid #4CAF50;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 키워드 결과 영역 */
+.keyword-results-section {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 2rem;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 25px 0 rgba(31, 38, 135, 0.3);
+    max-height: 700px;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+}
+
+.keyword-results-section:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px 0 rgba(31, 38, 135, 0.4);
+}
+
+/* 스크롤바 스타일링 */
+.keyword-results-section::-webkit-scrollbar {
+    width: 8px;
+}
+
+.keyword-results-section::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.keyword-results-section::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+.keyword-results-section::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.keyword-results-container {
+    margin-top: 1rem;
+}
+
+.keyword-result-header {
+    background: rgba(76, 175, 80, 0.2);
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.keyword-result-header h4 {
+    color: white;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.keyword-stats {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* 키워드 카테고리 카드 */
+.keyword-category-card {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.keyword-category-card:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.category-icon {
+    font-size: 1.5rem;
+}
+
+.category-name {
+    flex: 1;
+    font-size: 1rem;
+    color: white;
+    font-weight: bold;
+}
+
+.category-count {
+    background: rgba(76, 175, 80, 0.3);
+    padding: 0.2rem 0.6rem;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    color: white;
+}
+
+/* 키워드 리스트 */
+.keywords-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.keyword-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.keyword-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(3px);
+}
+
+.keyword-number {
+    background: rgba(76, 175, 80, 0.3);
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    min-width: 30px;
+    text-align: center;
+}
+
+.keyword-text {
+    flex: 1;
+    color: white;
+    font-size: 0.95rem;
+}
+
+.copy-keyword-btn {
+    background: rgba(33, 150, 243, 0.3);
+    border: none;
+    padding: 0.3rem 0.6rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.copy-keyword-btn:hover {
+    background: rgba(33, 150, 243, 0.5);
+    transform: scale(1.1);
+}
+
+/* 키워드 액션 버튼 */
+.keyword-actions {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.copy-all-btn {
+    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.copy-all-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
+}
+
+/* 빈 상태 및 에러 상태 */
+.empty-state,
+.error-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.empty-state:hover,
+.error-state:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.empty-icon,
+.error-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    display: block;
+    opacity: 0.8;
+    animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 0.4; }
+}
+
+.empty-text,
+.error-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+.retry-btn {
+    background: linear-gradient(135deg, #FF6B6B 0%, #EE5A52 100%);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: all 0.3s ease;
+}
+
+.retry-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+}
+
+/* 복사 알림 */
+.copy-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(76, 175, 80, 0.9);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    font-weight: bold;
+    z-index: 1000;
+    animation: slideInRight 0.3s ease-out;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.copy-notification.fade-out {
+    animation: fadeOut 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .keyword-content-wrapper {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .keyword-results-section {
+        max-height: 400px;
+    }
+    
+    .keyword-expansion-section {
+        margin: 1rem 0;
+        padding: 1rem 0;
+    }
+    
+    .keyword-expansion-section .container {
+        padding: 1rem;
+    }
+    
+    .keyword-input-section,
+    .keyword-results-section {
+        padding: 1rem;
+    }
+    
+    .keyword-stats {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .keyword-input {
+        font-size: 0.9rem;
+        padding: 0.8rem;
+    }
+    
+    .expand-btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .clear-btn {
+        width: 100%;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}

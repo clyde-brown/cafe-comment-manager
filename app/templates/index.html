@@ -736,6 +736,902 @@
         .comment-card:nth-child(4) { border-left-color: #45b7d1; } /* 조언형 */
         .comment-card:nth-child(5) { border-left-color: #96ceb4; } /* 친근형 */
         .comment-card:nth-child(6) { border-left-color: #feca57; } /* 경험공유형 */
+
+        /* ========================================
+           ⚙️ LLM 설정 섹션 스타일
+           ======================================== */
+
+        .llm-settings-section {
+            padding: 3rem 0;
+            background: rgba(255, 255, 255, 0.06);
+            margin: 2rem 0;
+            border-radius: 25px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25);
+        }
+
+        .llm-settings-section .container {
+            background: transparent;
+            box-shadow: none;
+            border: none;
+            padding: 2rem;
+        }
+
+        .llm-settings-section .section-header h2 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .llm-settings-section .section-description {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        .settings-content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            margin-top: 2.5rem;
+            align-items: start;
+        }
+
+        /* 모델 설정 영역 */
+        .model-settings-section,
+        .api-settings-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 25px 0 rgba(31, 38, 135, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .model-settings-section:hover,
+        .api-settings-section:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px 0 rgba(31, 38, 135, 0.3);
+        }
+
+        .settings-header h3 {
+            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 모델 선택 */
+        .model-selector-container label,
+        .api-key-container label {
+            display: block;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .model-select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .model-select:focus {
+            outline: none;
+            border-color: #2196F3;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(33, 150, 243, 0.3);
+        }
+
+        .model-select option {
+            background: #667eea;
+            color: white;
+            padding: 0.5rem;
+        }
+
+        /* 모델 정보 */
+        .model-info {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* API 키 입력 */
+        .api-key-input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .api-key-input {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+        }
+
+        .api-key-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .api-key-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .toggle-visibility-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 0.8rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            min-width: 50px;
+        }
+
+        .toggle-visibility-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* API 키 상태 */
+        .api-key-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .status-indicator {
+            font-size: 1rem;
+        }
+
+        .status-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+        }
+
+        /* API 키 도움말 */
+        .api-key-help {
+            margin-top: 1rem;
+        }
+
+        .api-key-help details {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .api-key-help summary {
+            color: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .help-content {
+            margin-top: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .help-content p {
+            margin-bottom: 0.5rem;
+        }
+
+        .help-content a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        .help-content a:hover {
+            text-decoration: underline;
+        }
+
+        /* 설정 액션 버튼 */
+        .settings-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .test-connection-btn,
+        .save-settings-btn,
+        .reset-settings-btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+        }
+
+        .test-connection-btn {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+        }
+
+        .test-connection-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.5);
+        }
+
+        .save-settings-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .save-settings-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.5);
+        }
+
+        .reset-settings-btn {
+            background: linear-gradient(135deg, #FF6B6B 0%, #EE5A52 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .reset-settings-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+        }
+
+        /* 연결 상태 */
+        .connection-status {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .connection-status.success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            color: white;
+        }
+
+        .connection-status.error {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            color: white;
+        }
+
+        .connection-status.testing {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid rgba(33, 150, 243, 0.3);
+            color: white;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .settings-content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .settings-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .test-connection-btn,
+            .save-settings-btn,
+            .reset-settings-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        /* ========================================
+           🔍 키워드 확장 섹션 스타일
+           ======================================== */
+
+        .keyword-expansion-section {
+            padding: 3rem 0;
+            background: rgba(255, 255, 255, 0.08);
+            margin: 3rem 0;
+            border-radius: 25px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.3);
+        }
+
+        .keyword-expansion-section .container {
+            background: transparent;
+            box-shadow: none;
+            border: none;
+            padding: 2rem;
+        }
+
+        .keyword-expansion-section .section-header h2 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .keyword-expansion-section .section-description {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        .keyword-content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            margin-top: 2.5rem;
+            align-items: start;
+        }
+
+        /* 키워드 입력 영역 */
+        .keyword-input-section {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 25px 0 rgba(31, 38, 135, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .keyword-input-section:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px 0 rgba(31, 38, 135, 0.4);
+        }
+
+        .keyword-input-section .input-header h3,
+        .keyword-results-section .results-header h3 {
+            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .keyword-results-section .results-info {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .keyword-input-container {
+            margin: 1rem 0;
+        }
+
+        .keyword-input {
+            width: 100%;
+            padding: 1.2rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .keyword-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .keyword-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .keyword-count-selector {
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .keyword-count-selector label {
+            font-size: 0.9rem;
+        }
+
+        .count-select {
+            padding: 0.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .count-select:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .count-select option {
+            background: #667eea;
+            color: white;
+        }
+
+        /* 액션 버튼 영역 */
+        .keyword-input-section .action-buttons {
+            display: flex !important;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            justify-content: center;
+            text-align: center !important;
+            flex-wrap: wrap;
+        }
+
+        .keyword-input-section .expand-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%) !important;
+            color: white !important;
+            padding: 1.2rem 2.5rem !important;
+            border: none !important;
+            border-radius: 12px !important;
+            font-size: 1.1rem !important;
+            font-weight: bold !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4) !important;
+            min-width: 160px;
+        }
+
+        .keyword-input-section .expand-btn:hover:not(:disabled) {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.5) !important;
+        }
+
+        .keyword-input-section .expand-btn:disabled {
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
+        }
+
+        .keyword-input-section .clear-btn {
+            background: linear-gradient(135deg, #FF6B6B 0%, #EE5A52 100%) !important;
+            color: white !important;
+            padding: 1.2rem 2rem !important;
+            border: none !important;
+            border-radius: 12px !important;
+            font-size: 1.1rem !important;
+            font-weight: bold !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4) !important;
+            min-width: 120px;
+        }
+
+        .keyword-input-section .clear-btn:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5) !important;
+        }
+
+        /* 로딩 상태 */
+        .keyword-input-section .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1rem;
+            padding: 2rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .keyword-input-section .loading .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 키워드 결과 영역 */
+        .keyword-results-section {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 25px 0 rgba(31, 38, 135, 0.3);
+            max-height: 700px;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+        .keyword-results-section:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px 0 rgba(31, 38, 135, 0.4);
+        }
+
+        /* 스크롤바 스타일링 */
+        .keyword-results-section::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .keyword-results-section::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .keyword-results-section::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        .keyword-results-section::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .keyword-results-container {
+            margin-top: 1rem;
+        }
+
+        .keyword-result-header {
+            background: rgba(76, 175, 80, 0.2);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .keyword-result-header h4 {
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .keyword-stats {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* 키워드 카테고리 카드 */
+        .keyword-category-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .keyword-category-card:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .category-icon {
+            font-size: 1.5rem;
+        }
+
+        .category-name {
+            flex: 1;
+            font-size: 1rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .category-count {
+            background: rgba(76, 175, 80, 0.3);
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            color: white;
+        }
+
+        /* 키워드 리스트 */
+        .keywords-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .keyword-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .keyword-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(3px);
+        }
+
+        .keyword-number {
+            background: rgba(76, 175, 80, 0.3);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .keyword-text {
+            flex: 1;
+            color: white;
+            font-size: 0.95rem;
+        }
+
+        .copy-keyword-btn {
+            background: rgba(33, 150, 243, 0.3);
+            border: none;
+            padding: 0.3rem 0.6rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .copy-keyword-btn:hover {
+            background: rgba(33, 150, 243, 0.5);
+            transform: scale(1.1);
+        }
+
+        /* 키워드 액션 버튼 */
+        .keyword-actions {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .copy-all-btn {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-all-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
+        }
+
+        /* 빈 상태 및 에러 상태 */
+        .empty-state,
+        .error-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .empty-state:hover,
+        .error-state:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .empty-icon,
+        .error-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            display: block;
+            opacity: 0.8;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.4; }
+        }
+
+        .empty-text,
+        .error-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .retry-btn {
+            background: linear-gradient(135deg, #FF6B6B 0%, #EE5A52 100%);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .retry-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        /* 복사 알림 */
+        .copy-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            font-weight: bold;
+            z-index: 1000;
+            animation: slideInRight 0.3s ease-out;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .copy-notification.fade-out {
+            animation: fadeOut 0.3s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .keyword-content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .keyword-results-section {
+                max-height: 400px;
+            }
+            
+            .keyword-expansion-section {
+                margin: 1rem 0;
+                padding: 1rem 0;
+            }
+            
+            .keyword-expansion-section .container {
+                padding: 1rem;
+            }
+            
+            .keyword-input-section,
+            .keyword-results-section {
+                padding: 1rem;
+            }
+            
+            .keyword-stats {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .keyword-input {
+                font-size: 0.9rem;
+                padding: 0.8rem;
+            }
+            
+            .expand-btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            .clear-btn {
+                width: 100%;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -863,6 +1759,182 @@
                         <div class="empty-state">
                             <div class="empty-icon">🤖</div>
                             <div class="empty-text">카페 게시글을 입력하고 댓글 생성 버튼을 눌러주세요</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ⚙️ LLM 설정 섹션 -->
+    <div class="llm-settings-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>⚙️ AI 모델 설정</h2>
+                <p class="section-description">사용할 AI 모델과 API 키를 설정하여 더 나은 결과를 얻으세요.</p>
+            </div>
+
+            <div class="settings-content-wrapper">
+                <!-- 왼쪽: 모델 설정 -->
+                <div class="model-settings-section">
+                    <div class="settings-header">
+                        <h3>🤖 AI 모델 선택</h3>
+                    </div>
+                    
+                    <div class="model-selector-container">
+                        <label for="modelSelect">AI 모델:</label>
+                        <select id="modelSelect" class="model-select">
+                            <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                            <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash</option>
+                            <option value="gpt-4">GPT-4</option>
+                            <option value="claude-3-sonnet">Claude 3 Sonnet</option>
+                        </select>
+                        
+                        <div class="model-info" id="modelInfo">
+                            <div class="info-item">
+                                <span class="info-label">속도:</span>
+                                <span class="info-value" id="modelSpeed">매우 빠름</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">품질:</span>
+                                <span class="info-value" id="modelQuality">높음</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">비용:</span>
+                                <span class="info-value" id="modelCost">저렴</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 오른쪽: API 키 설정 -->
+                <div class="api-settings-section">
+                    <div class="settings-header">
+                        <h3>🔑 API 키 설정</h3>
+                    </div>
+                    
+                    <div class="api-key-container">
+                        <label for="apiKeyInput">API 키:</label>
+                        <div class="api-key-input-group">
+                            <input 
+                                type="password" 
+                                id="apiKeyInput" 
+                                placeholder="여기에 API 키를 입력하세요..."
+                                class="api-key-input"
+                            />
+                            <button type="button" class="toggle-visibility-btn" onclick="toggleApiKeyVisibility()">
+                                👁️
+                            </button>
+                        </div>
+                        
+                        <div class="api-key-status" id="apiKeyStatus">
+                            <span class="status-indicator" id="statusIndicator">🔴</span>
+                            <span class="status-text" id="statusText">API 키가 설정되지 않음</span>
+                        </div>
+                        
+                        <div class="api-key-help">
+                            <details>
+                                <summary>API 키 발급 방법</summary>
+                                <div class="help-content">
+                                    <p><strong>Gemini API:</strong></p>
+                                    <p>1. <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a>에서 발급</p>
+                                    <p>2. "Create API Key" 클릭</p>
+                                    <p>3. 생성된 키를 복사하여 입력</p>
+                                    
+                                    <p><strong>OpenAI API:</strong></p>
+                                    <p>1. <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a>에서 발급</p>
+                                    <p>2. "Create new secret key" 클릭</p>
+                                    
+                                    <p><strong>Claude API:</strong></p>
+                                    <p>1. <a href="https://console.anthropic.com/" target="_blank">Anthropic Console</a>에서 발급</p>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-actions">
+                <button type="button" class="test-connection-btn" onclick="testConnection()">
+                    🔍 연결 테스트
+                </button>
+                <button type="button" class="save-settings-btn" onclick="saveSettings()">
+                    💾 설정 저장
+                </button>
+                <button type="button" class="reset-settings-btn" onclick="resetSettings()">
+                    🔄 초기화
+                </button>
+            </div>
+
+            <div class="connection-status" id="connectionStatus" style="display: none;">
+                <!-- 연결 테스트 결과가 여기에 표시됩니다 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔍 키워드 확장 섹션 -->
+    <div class="keyword-expansion-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>🔍 마케팅 키워드 자동 확장</h2>
+                <p class="section-description">타겟 키워드를 입력하면 AI가 5가지 카테고리로 분류된 확장 키워드를 자동으로 생성해드립니다.</p>
+            </div>
+
+            <div class="keyword-content-wrapper">
+                <!-- 왼쪽: 키워드 입력 영역 -->
+                <div class="keyword-input-section">
+                    <div class="input-header">
+                        <h3>🎯 타겟 키워드 입력</h3>
+                    </div>
+                    
+                    <div class="keyword-input-container">
+                        <input 
+                            type="text" 
+                            id="targetKeywordInput" 
+                            placeholder="예: 폭염, 다이어트, 영어공부"
+                            class="keyword-input"
+                        />
+                        
+                        <div class="keyword-count-selector">
+                            <label for="keywordCountSelect">생성할 키워드 개수:</label>
+                            <select id="keywordCountSelect" class="count-select">
+                                <option value="10">10개</option>
+                                <option value="20" selected>20개 (권장)</option>
+                                <option value="30">30개</option>
+                                <option value="50">50개</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="button" id="expandKeywordBtn" class="expand-btn" onclick="expandKeyword()">
+                            🔍 키워드 확장
+                        </button>
+                        <button type="button" class="clear-btn" onclick="clearKeyword()">
+                            🗑️ 초기화
+                        </button>
+                    </div>
+
+                    <div class="loading" id="keywordLoading" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>AI가 키워드를 확장하고 있습니다...</p>
+                    </div>
+                </div>
+
+                <!-- 오른쪽: 키워드 결과 영역 -->
+                <div class="keyword-results-section">
+                    <div class="results-header">
+                        <h3>📊 확장된 키워드</h3>
+                        <div class="results-info">
+                            키워드 확장이 완료되면 여기에 결과가 표시됩니다
+                        </div>
+                    </div>
+                    
+                    <div class="keyword-results-container" id="keywordResults">
+                        <!-- 키워드 결과가 여기에 표시됩니다 -->
+                        <div class="empty-state">
+                            <div class="empty-icon">🔍</div>
+                            <div class="empty-text">타겟 키워드를 입력하고 확장 버튼을 눌러주세요</div>
                         </div>
                     </div>
                 </div>
@@ -1647,6 +2719,453 @@
             document.getElementById('articleInput').value = '';
             document.getElementById('reactionResults').innerHTML = '';
         }
+
+        // ========================================
+        // ⚙️ LLM 설정 관련 함수들
+        // ========================================
+
+        // 모델 정보 데이터
+        const modelInfo = {
+            'gemini-2.0-flash-exp': { speed: '매우 빠름', quality: '높음', cost: '저렴' },
+            'gemini-2.5-flash': { speed: '매우 빠름', quality: '높음', cost: '저렴' },
+            // 'gemini-1.5-pro': { speed: '보통', quality: '매우 높음', cost: '보통' },
+            // 'gemini-1.5-flash': { speed: '빠름', quality: '높음', cost: '저렴' },
+            'gpt-4': { speed: '느림', quality: '매우 높음', cost: '비쌈' },
+            // 'gpt-3.5-turbo': { speed: '빠름', quality: '보통', cost: '저렴' },
+            // 'claude-3-sonnet': { speed: '보통', quality: '높음', cost: '보통' }
+        };
+
+        // 모델 선택 시 정보 업데이트
+        function updateModelInfo() {
+            const modelSelect = document.getElementById('modelSelect');
+            const selectedModel = modelSelect.value;
+            const info = modelInfo[selectedModel];
+            
+            if (info) {
+                document.getElementById('modelSpeed').textContent = info.speed;
+                document.getElementById('modelQuality').textContent = info.quality;
+                document.getElementById('modelCost').textContent = info.cost;
+            }
+        }
+
+        // API 키 가시성 토글
+        function toggleApiKeyVisibility() {
+            const apiKeyInput = document.getElementById('apiKeyInput');
+            const toggleBtn = document.querySelector('.toggle-visibility-btn');
+            
+            if (apiKeyInput.type === 'password') {
+                apiKeyInput.type = 'text';
+                toggleBtn.textContent = '🙈';
+            } else {
+                apiKeyInput.type = 'password';
+                toggleBtn.textContent = '👁️';
+            }
+        }
+
+        // API 키 상태 업데이트
+        function updateApiKeyStatus() {
+            const apiKeyInput = document.getElementById('apiKeyInput');
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            
+            const apiKey = apiKeyInput.value.trim();
+            
+            if (!apiKey) {
+                statusIndicator.textContent = '🔴';
+                statusText.textContent = 'API 키가 설정되지 않음';
+            } else if (apiKey.length < 10) {
+                statusIndicator.textContent = '🟡';
+                statusText.textContent = 'API 키가 너무 짧음';
+            } else {
+                statusIndicator.textContent = '🟢';
+                statusText.textContent = 'API 키가 설정됨';
+            }
+        }
+
+        // 연결 테스트
+        async function testConnection() {
+            const modelSelect = document.getElementById('modelSelect');
+            const apiKeyInput = document.getElementById('apiKeyInput');
+            const connectionStatus = document.getElementById('connectionStatus');
+            const testBtn = document.querySelector('.test-connection-btn');
+            
+            const model = modelSelect.value;
+            const apiKey = apiKeyInput.value.trim();
+            
+            if (!apiKey) {
+                showConnectionStatus('error', '❌ API 키를 먼저 입력해주세요.');
+                return;
+            }
+            
+            // 버튼 비활성화 및 로딩 상태
+            testBtn.disabled = true;
+            testBtn.textContent = '🔄 테스트 중...';
+            showConnectionStatus('testing', '🔄 연결을 테스트하고 있습니다...');
+            
+            try {
+                const response = await fetch('/api/llm/test-connection', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        api_key: apiKey
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showConnectionStatus('success', `✅ 연결 성공! 모델: ${model}`);
+                } else {
+                    showConnectionStatus('error', `❌ 연결 실패: ${data.message}`);
+                }
+                
+            } catch (error) {
+                console.error('연결 테스트 오류:', error);
+                showConnectionStatus('error', '❌ 서버와 통신 중 오류가 발생했습니다.');
+            } finally {
+                testBtn.disabled = false;
+                testBtn.textContent = '🔍 연결 테스트';
+            }
+        }
+
+        // 설정 저장
+        async function saveSettings() {
+            const modelSelect = document.getElementById('modelSelect');
+            const apiKeyInput = document.getElementById('apiKeyInput');
+            const saveBtn = document.querySelector('.save-settings-btn');
+            
+            const model = modelSelect.value;
+            const apiKey = apiKeyInput.value.trim();
+            
+            if (!apiKey) {
+                showConnectionStatus('error', '❌ API 키를 먼저 입력해주세요.');
+                return;
+            }
+            
+            saveBtn.disabled = true;
+            saveBtn.textContent = '💾 저장 중...';
+            
+            try {
+                const response = await fetch('/api/llm/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        api_key: apiKey
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showConnectionStatus('success', '✅ 설정이 저장되었습니다!');
+                    // 로컬 스토리지에도 저장 (API 키는 제외)
+                    localStorage.setItem('selectedModel', model);
+                } else {
+                    showConnectionStatus('error', `❌ 저장 실패: ${data.message}`);
+                }
+                
+            } catch (error) {
+                console.error('설정 저장 오류:', error);
+                showConnectionStatus('error', '❌ 설정 저장 중 오류가 발생했습니다.');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = '💾 설정 저장';
+            }
+        }
+
+        // 설정 초기화
+        function resetSettings() {
+            if (confirm('설정을 초기화하시겠습니까?')) {
+                document.getElementById('modelSelect').value = 'gemini-2.5-flash';
+                document.getElementById('apiKeyInput').value = '';
+                updateModelInfo();
+                updateApiKeyStatus();
+                
+                // 로컬 스토리지 초기화
+                localStorage.removeItem('selectedModel');
+                
+                showConnectionStatus('success', '✅ 설정이 초기화되었습니다.');
+            }
+        }
+
+        // 연결 상태 표시
+        function showConnectionStatus(type, message) {
+            const connectionStatus = document.getElementById('connectionStatus');
+            connectionStatus.className = `connection-status ${type}`;
+            connectionStatus.innerHTML = message;
+            connectionStatus.style.display = 'block';
+            
+            // 5초 후 자동 숨김
+            setTimeout(() => {
+                connectionStatus.style.display = 'none';
+            }, 5000);
+        }
+
+        // 설정 불러오기
+        async function loadSettings() {
+            try {
+                // 로컬 스토리지에서 모델 설정 불러오기
+                const savedModel = localStorage.getItem('selectedModel');
+                if (savedModel) {
+                    document.getElementById('modelSelect').value = savedModel;
+                    updateModelInfo();
+                }
+                
+                // 서버에서 설정 불러오기 (API 키 상태만)
+                const response = await fetch('/api/llm/settings');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.has_api_key) {
+                        document.getElementById('statusIndicator').textContent = '🟢';
+                        document.getElementById('statusText').textContent = 'API 키가 설정됨 (서버에 저장됨)';
+                    }
+                }
+            } catch (error) {
+                console.error('설정 불러오기 오류:', error);
+            }
+        }
+
+        // 이벤트 리스너 등록
+        document.addEventListener('DOMContentLoaded', function() {
+            // 모델 선택 변경 시
+            const modelSelect = document.getElementById('modelSelect');
+            if (modelSelect) {
+                modelSelect.addEventListener('change', updateModelInfo);
+                updateModelInfo(); // 초기 정보 설정
+            }
+            
+            // API 키 입력 시
+            const apiKeyInput = document.getElementById('apiKeyInput');
+            if (apiKeyInput) {
+                apiKeyInput.addEventListener('input', updateApiKeyStatus);
+                updateApiKeyStatus(); // 초기 상태 설정
+            }
+            
+            // 설정 불러오기
+            loadSettings();
+        });
+
+        // ========================================
+        // 🔍 키워드 확장 관련 함수들
+        // ========================================
+
+        async function expandKeyword() {
+            const keywordInput = document.getElementById('targetKeywordInput');
+            const countSelect = document.getElementById('keywordCountSelect');
+            const expandBtn = document.getElementById('expandKeywordBtn');
+            const loadingDiv = document.getElementById('keywordLoading');
+            const resultsDiv = document.getElementById('keywordResults');
+
+            const targetKeyword = keywordInput.value.trim();
+            const keywordCount = parseInt(countSelect.value);
+
+            if (!targetKeyword) {
+                alert('타겟 키워드를 입력해주세요.');
+                keywordInput.focus();
+                return;
+            }
+
+            // UI 상태 변경
+            expandBtn.disabled = true;
+            loadingDiv.style.display = 'flex';
+            resultsDiv.innerHTML = '';
+
+            try {
+                const response = await fetch('/api/keywords/expand', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        target_keyword: targetKeyword,
+                        keyword_count: keywordCount
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayKeywordResults(data);
+                } else {
+                    showKeywordError(data.message || '키워드 확장에 실패했습니다.');
+                }
+
+            } catch (error) {
+                console.error('키워드 확장 오류:', error);
+                showKeywordError('서버와 통신 중 오류가 발생했습니다.');
+            } finally {
+                expandBtn.disabled = false;
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        function displayKeywordResults(data) {
+            const resultsDiv = document.getElementById('keywordResults');
+            
+            const categoryIcons = {
+                '직설적': '🎯',
+                '문제_니즈': '❗',
+                '솔루션_혜택': '✨',
+                '롱테일': '📝',
+                '경쟁_대체': '🔄'
+            };
+
+            const categoryNames = {
+                '직설적': '직설적 키워드',
+                '문제_니즈': '문제/니즈 키워드',
+                '솔루션_혜택': '솔루션/혜택 키워드',
+                '롱테일': '롱테일 키워드',
+                '경쟁_대체': '경쟁/대체 키워드'
+            };
+
+            let html = `
+                <div class="keyword-result-header">
+                    <h4>🎯 타겟 키워드: "${data.target_keyword}"</h4>
+                    <div class="keyword-stats">
+                        <span class="stat-item">📊 총 ${data.total_count}개 키워드 생성</span>
+                        <span class="stat-item">⏱️ ${data.processing_time.toFixed(2)}초 소요</span>
+                    </div>
+                </div>
+            `;
+
+            // 각 카테고리별 키워드 표시
+            const categories = ['직설적', '문제_니즈', '솔루션_혜택', '롱테일', '경쟁_대체'];
+            
+            categories.forEach(category => {
+                const keywords = data.keywords[category] || [];
+                if (keywords.length > 0) {
+                    const icon = categoryIcons[category];
+                    const name = categoryNames[category];
+                    
+                    html += `
+                        <div class="keyword-category-card">
+                            <div class="category-header">
+                                <span class="category-icon">${icon}</span>
+                                <h5 class="category-name">${name}</h5>
+                                <span class="category-count">${keywords.length}개</span>
+                            </div>
+                            <div class="keywords-list">
+                    `;
+                    
+                    keywords.forEach((keyword, index) => {
+                        html += `
+                            <div class="keyword-item">
+                                <span class="keyword-number">${index + 1}</span>
+                                <span class="keyword-text">${keyword}</span>
+                                <button class="copy-keyword-btn" onclick="copyKeyword('${keyword.replace(/'/g, "\\'")}')">
+                                    📋
+                                </button>
+                            </div>
+                        `;
+                    });
+                    
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            // 전체 복사 버튼
+            html += `
+                <div class="keyword-actions">
+                    <button class="copy-all-btn" onclick="copyAllKeywords(${JSON.stringify(data.keywords).replace(/"/g, '&quot;')})">
+                        📋 전체 키워드 복사
+                    </button>
+                </div>
+            `;
+
+            resultsDiv.innerHTML = html;
+        }
+
+        function showKeywordError(message) {
+            const resultsDiv = document.getElementById('keywordResults');
+            resultsDiv.innerHTML = `
+                <div class="error-state">
+                    <div class="error-icon">❌</div>
+                    <div class="error-text">${message}</div>
+                    <button class="retry-btn" onclick="expandKeyword()">다시 시도</button>
+                </div>
+            `;
+        }
+
+        function clearKeyword() {
+            document.getElementById('targetKeywordInput').value = '';
+            document.getElementById('keywordResults').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">🔍</div>
+                    <div class="empty-text">타겟 키워드를 입력하고 확장 버튼을 눌러주세요</div>
+                </div>
+            `;
+        }
+
+        function copyKeyword(keyword) {
+            navigator.clipboard.writeText(keyword).then(() => {
+                showCopyNotification('키워드가 복사되었습니다!');
+            }).catch(err => {
+                console.error('복사 실패:', err);
+                alert('복사에 실패했습니다.');
+            });
+        }
+
+        function copyAllKeywords(keywords) {
+            let allKeywords = [];
+            const categories = ['직설적', '문제_니즈', '솔루션_혜택', '롱테일', '경쟁_대체'];
+            
+            categories.forEach(category => {
+                const keywordList = keywords[category] || [];
+                if (keywordList.length > 0) {
+                    allKeywords.push(...keywordList);
+                }
+            });
+
+            const keywordText = allKeywords.join('\n');
+            
+            navigator.clipboard.writeText(keywordText).then(() => {
+                showCopyNotification(`${allKeywords.length}개 키워드가 모두 복사되었습니다!`);
+            }).catch(err => {
+                console.error('복사 실패:', err);
+                alert('복사에 실패했습니다.');
+            });
+        }
+
+        function showCopyNotification(message) {
+            // 기존 알림이 있으면 제거
+            const existingNotification = document.querySelector('.copy-notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+
+            // 새 알림 생성
+            const notification = document.createElement('div');
+            notification.className = 'copy-notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            // 3초 후 제거
+            setTimeout(() => {
+                notification.classList.add('fade-out');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Enter 키로 검색 가능하게
+        document.addEventListener('DOMContentLoaded', function() {
+            const keywordInput = document.getElementById('targetKeywordInput');
+            if (keywordInput) {
+                keywordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        expandKeyword();
+                    }
+                });
+            }
+        });
 
         function copyReaction(element) {
             const text = element.textContent;
