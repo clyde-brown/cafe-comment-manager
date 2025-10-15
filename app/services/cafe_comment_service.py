@@ -15,6 +15,7 @@ from app.models.ai_reaction import (
     CafeCommentResponse,
     CafeComment,
 )
+from app.services.prompt_loader_service import get_prompt_loader
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +28,7 @@ class MockCafeCommentProvider:
 
     def __init__(self, model_version: str = "Mock-Gemini-2.5-Flash"):
         self.model_version = model_version
+        self.prompt_loader = get_prompt_loader()
         logger.info(
             f"MockCafeCommentProvider 초기화 완료. 모델 버전: {self.model_version}"
         )

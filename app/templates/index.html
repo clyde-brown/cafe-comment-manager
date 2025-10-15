@@ -1183,7 +1183,8 @@
             transform: translateY(-1px);
         }
 
-        .keyword-count-selector {
+        .keyword-count-selector,
+        .prompt-type-selector {
             margin-top: 1rem;
             display: flex;
             align-items: center;
@@ -1191,11 +1192,14 @@
             color: rgba(255, 255, 255, 0.9);
         }
 
-        .keyword-count-selector label {
+        .keyword-count-selector label,
+        .prompt-type-selector label {
             font-size: 0.9rem;
+            min-width: 120px;
         }
 
-        .count-select {
+        .count-select,
+        .prompt-select {
             padding: 0.5rem;
             border: 2px solid rgba(255, 255, 255, 0.2);
             border-radius: 8px;
@@ -1204,16 +1208,23 @@
             font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            flex: 1;
         }
 
-        .count-select:focus {
+        .count-select:focus,
+        .prompt-select:focus {
             outline: none;
             border-color: #4CAF50;
         }
 
-        .count-select option {
+        .count-select option,
+        .prompt-select option {
             background: #667eea;
             color: white;
+        }
+
+        .prompt-select {
+            font-size: 0.85rem;
         }
 
         /* 액션 버튼 영역 */
@@ -1902,6 +1913,17 @@
                                 <option value="20" selected>20개 (권장)</option>
                                 <option value="30">30개</option>
                                 <option value="50">50개</option>
+                            </select>
+                        </div>
+
+                        <div class="prompt-type-selector">
+                            <label for="promptTypeSelect">프롬프트 스타일:</label>
+                            <select id="promptTypeSelect" class="prompt-select">
+                                <option value="keyword_expansion">🎯 기본 - 마케팅 키워드 확장</option>
+                                <option value="keyword_expansion_creative">🎨 창의적 - 감정/트렌드 중심</option>
+                                <option value="keyword_expansion_seo">🔍 SEO - 검색엔진 최적화</option>
+                                <option value="keyword_expansion_competitor">🏆 경쟁사 - 경쟁 분석 중심</option>
+                                <option value="keyword_expansion_simple">⚡ 간단 - 빠른 키워드 생성</option>
                             </select>
                         </div>
                     </div>
@@ -2958,12 +2980,14 @@
         async function expandKeyword() {
             const keywordInput = document.getElementById('targetKeywordInput');
             const countSelect = document.getElementById('keywordCountSelect');
+            const promptTypeSelect = document.getElementById('promptTypeSelect');
             const expandBtn = document.getElementById('expandKeywordBtn');
             const loadingDiv = document.getElementById('keywordLoading');
             const resultsDiv = document.getElementById('keywordResults');
 
             const targetKeyword = keywordInput.value.trim();
             const keywordCount = parseInt(countSelect.value);
+            const promptType = promptTypeSelect.value;
 
             if (!targetKeyword) {
                 alert('타겟 키워드를 입력해주세요.');
@@ -2984,7 +3008,8 @@
                     },
                     body: JSON.stringify({
                         target_keyword: targetKeyword,
-                        keyword_count: keywordCount
+                        keyword_count: keywordCount,
+                        prompt_type: promptType
                     })
                 });
 

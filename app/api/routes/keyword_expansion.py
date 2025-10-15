@@ -8,11 +8,13 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from app.models.keyword_expansion import (
     KeywordExpansionRequest,
     KeywordExpansionResponse,
+    PromptType,
 )
 from app.services.keyword_expansion_service import (
     KeywordExpansionService,
     create_keyword_expansion_service,
 )
+from app.services.prompt_loader_service import get_prompt_loader
 import logging
 
 logger = logging.getLogger(__name__)
@@ -70,3 +72,42 @@ async def expand_keywords(
         f"API 응답 전송: /keywords/expand (성공: {response.success}, 총 키워드: {response.total_count}개)"
     )
     return response
+
+
+@router.get("/prompts")
+async def get_available_prompts():
+    """
+    사용 가능한 프롬프트 목록 반환
+
+    Returns:
+        dict: 프롬프트 타입별 정보
+    """
+    try:
+        prompt_loader = get_prompt_loader()
+
+        # 키워드 확장 관련 프롬프트만 필터링
+        prompts_info = {}
+
+        for prompt_type in PromptType:
+            prompt_info = prompt_loader.get_prompt_info(
+                "keyword_expansion", prompt_type.value
+            )
+            if prompt_info:
+                prompts_info[prompt_type.value] = {
+                    "name": prompt_info.get("name", prompt_type.value),
+                    "description": prompt_info.get("description", ""),
+                    "version": prompt_info.get("version", "1.0"),
+                }
+
+        return {
+            "success": True,
+            "prompts": prompts_info,
+            "total_count": len(prompts_info),
+        }
+
+    except Exception as e:
+        logger.error(f"프롬프트 목록 조회 실패: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="프롬프트 목록을 불러올 수 없습니다.",
+        )

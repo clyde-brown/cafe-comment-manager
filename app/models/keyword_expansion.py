@@ -6,6 +6,17 @@
 
 from typing import List, Optional
 from pydantic import BaseModel, Field
+from enum import Enum
+
+
+class PromptType(str, Enum):
+    """프롬프트 타입 열거형"""
+
+    BASIC = "keyword_expansion"
+    CREATIVE = "keyword_expansion_creative"
+    SEO = "keyword_expansion_seo"
+    COMPETITOR = "keyword_expansion_competitor"
+    SIMPLE = "keyword_expansion_simple"
 
 
 class KeywordExpansionRequest(BaseModel):
@@ -14,6 +25,9 @@ class KeywordExpansionRequest(BaseModel):
     target_keyword: str = Field(..., min_length=1, description="확장할 타겟 키워드")
     keyword_count: Optional[int] = Field(
         20, ge=5, le=50, description="생성할 총 키워드 개수 (5-50개)"
+    )
+    prompt_type: Optional[PromptType] = Field(
+        PromptType.BASIC, description="사용할 프롬프트 타입"
     )
 
 

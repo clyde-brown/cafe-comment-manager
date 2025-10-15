@@ -16,8 +16,10 @@ from app.models.keyword_expansion import (
     KeywordExpansionRequest,
     KeywordExpansionResponse,
     KeywordsByCategory,
+    PromptType,
 )
 from app.services.llm_settings_service import create_llm_settings_service
+from app.services.prompt_loader_service import get_prompt_loader
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +37,9 @@ class KeywordExpansionService:
         """
         # LLM 설정 서비스 초기화
         self.llm_settings_service = create_llm_settings_service()
+
+        # 프롬프트 로더 서비스 초기화
+        self.prompt_loader = get_prompt_loader()
 
         # API 키 결정 (매개변수 > 설정 파일 > Mock 모드)
         self.gemini_api_key = (
@@ -57,8 +62,34 @@ class KeywordExpansionService:
                 logger.warning(f"Gemini API 초기화 실패, Mock 모드로 전환: {e}")
                 self.use_mock = True
 
-    def _create_prompt(self, target_keyword: str, keyword_count: int) -> str:
+    def _create_prompt(
+        self,
+        target_keyword: str,
+        keyword_count: int,
+        prompt_type: PromptType = PromptType.BASIC,
+    ) -> str:
         """키워드 확장 프롬프트 생성"""
+        try:
+            # 외부 프롬프트 템플릿 사용
+            prompt = self.prompt_loader.format_prompt(
+                category="keyword_expansion",
+                prompt_name=prompt_type.value,
+                target_keyword=target_keyword,
+                keyword_count=keyword_count,
+            )
+
+            if prompt:
+                logger.debug(f"외부 프롬프트 템플릿 사용: {prompt_type.value}")
+                return prompt
+            else:
+                logger.warning(
+                    f"외부 프롬프트 로드 실패 ({prompt_type.value}), 기본 프롬프트 사용"
+                )
+
+        except Exception as e:
+            logger.error(f"프롬프트 로드 중 오류: {e}, 기본 프롬프트 사용")
+
+        # 기본 프롬프트 (fallback)
         return f"""
 당신은 마케팅 키워드 추출 전문가입니다.  
 주어진 키워드와 관련된 유사 키워드, 연관 검색어, 잠재 고객이 실제로 검색할 법한 변형 키워드 {keyword_count}개를 제안해주세요.
@@ -167,8 +198,11 @@ class KeywordExpansionService:
         start_time = time.time()
         target_keyword = request.target_keyword
         keyword_count = request.keyword_count or 20
+        prompt_type = request.prompt_type or PromptType.BASIC
 
-        logger.info(f"키워드 확장 시작: '{target_keyword}' ({keyword_count}개)")
+        logger.info(
+            f"키워드 확장 시작: '{target_keyword}' ({keyword_count}개, 프롬프트: {prompt_type.value})"
+        )
 
         try:
             if self.use_mock:
@@ -181,7 +215,7 @@ class KeywordExpansionService:
                 raw_response = json.dumps(keywords_data, ensure_ascii=False, indent=2)
             else:
                 # Gemini API 사용
-                prompt = self._create_prompt(target_keyword, keyword_count)
+                prompt = self._create_prompt(target_keyword, keyword_count, prompt_type)
                 raw_response = await self._generate_with_gemini(prompt)
                 keywords_data = self._parse_json_response(raw_response)
 
