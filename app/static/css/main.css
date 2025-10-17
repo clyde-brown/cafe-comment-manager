@@ -276,7 +276,11 @@ h1 {
     backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 8px 25px 0 rgba(31, 38, 135, 0.3);
+    height: 100%;
+    min-height: 500px;
     transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 .keyword-input-section:hover {
@@ -448,9 +452,12 @@ h1 {
     backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 8px 25px 0 rgba(31, 38, 135, 0.3);
-    max-height: 700px;
+    height: 100%;
+    min-height: 500px;
     overflow-y: auto;
     transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 .keyword-results-section:hover {
@@ -480,6 +487,8 @@ h1 {
 
 .keyword-results-container {
     margin-top: 1rem;
+    flex: 1;
+    overflow-y: auto;
 }
 
 .keyword-result-header {
@@ -734,7 +743,13 @@ h1 {
     }
     
     .keyword-results-section {
-        max-height: 400px;
+        min-height: 300px;
+        height: auto;
+    }
+    
+    .keyword-input-section {
+        min-height: 300px;
+        height: auto;
     }
     
     .keyword-expansion-section {

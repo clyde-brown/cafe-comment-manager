@@ -2646,12 +2646,12 @@
         </div>
     </div>
 
-    <!-- 📝 게시글 분석 및 댓글 자동생성 섹션 -->
+    <!-- 📝 게시글 분석 섹션 -->
     <div class="keyword-expansion-section">
         <div class="container">
             <div class="section-header">
-                <h2>📝 게시글 분석 및 댓글 자동생성</h2>
-                <p class="section-description">게시글을 분석하고 AI가 자연스러운 댓글을 자동으로 생성해드립니다</p>
+                <h2>📝 게시글 분석</h2>
+                <p class="section-description">게시글을 심리학적으로 분석하여 댓글 전략을 도출합니다</p>
             </div>
 
             <div class="keyword-content-wrapper">
@@ -2697,9 +2697,6 @@
                         <button type="button" id="analyzePostBtn" class="expand-btn" onclick="analyzePost()">
                             🔍 게시글 분석
                         </button>
-                        <button type="button" id="generateCommentsBtn" class="expand-btn" onclick="generateComments()" disabled style="opacity: 0.6; cursor: not-allowed;">
-                            💬 댓글 자동생성
-                        </button>
                         <button type="button" class="expand-btn" onclick="testDisplayAnalysisResults()" style="background: #ff9800; margin-left: 10px;">
                             🧪 테스트
                         </button>
@@ -2711,7 +2708,7 @@
                     </div>
                 </div>
 
-                <!-- 오른쪽: 분석 결과 및 댓글 생성 결과 영역 -->
+                <!-- 오른쪽: 분석 결과 영역 -->
                 <div class="keyword-results-section">
                     <!-- 분석 결과 영역 -->
                     <div class="results-header">
@@ -2721,13 +2718,52 @@
                         </div>
                     </div>
                     
-                    <div class="keyword-results-container" id="analysisResults" style="max-height: 300px; overflow-y: auto; margin-bottom: 1.5rem;">
+                    <div class="keyword-results-container" id="analysisResults">
                         <div class="empty-state">
                             <div class="empty-icon">📊</div>
                             <div class="empty-text">게시글을 입력하고 분석 버튼을 눌러주세요</div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- 💬 댓글 자동생성 섹션 -->
+    <div class="keyword-expansion-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>💬 댓글 자동생성</h2>
+                <p class="section-description">분석 결과를 바탕으로 AI가 자연스러운 댓글을 자동으로 생성해드립니다</p>
+            </div>
+
+            <div class="keyword-content-wrapper">
+                <!-- 왼쪽: 댓글 생성 버튼 영역 -->
+                <div class="keyword-input-section">
+                    <div class="input-header">
+                        <h3>🤖 댓글 생성</h3>
+                    </div>
+                    
+                    <div class="keyword-input-container" style="text-align: center; padding: 2rem;">
+                        <div style="margin-bottom: 1.5rem; color: rgba(255,255,255,0.8); font-size: 0.95rem;">
+                            먼저 위에서 게시글을 분석해주세요
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button type="button" id="generateCommentsBtn" class="expand-btn" onclick="generateComments()" disabled style="opacity: 0.6; cursor: not-allowed;">
+                                💬 댓글 자동생성
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="loading" id="commentGenerationLoading" style="display: none;">
+                        <div class="spinner"></div>
+                        <p id="commentLoadingText">댓글을 생성하고 있습니다...</p>
+                    </div>
+                </div>
+
+                <!-- 오른쪽: 댓글 생성 결과 영역 -->
+                <div class="keyword-results-section">
                     <!-- 댓글 생성 결과 영역 -->
                     <div class="results-header">
                         <h3>💬 생성된 댓글</h3>
@@ -4298,8 +4334,8 @@
             }
             
             const generateBtn = document.getElementById('generateCommentsBtn');
-            const loadingDiv = document.getElementById('postAnalysisLoading');
-            const loadingText = document.getElementById('loadingText');
+            const loadingDiv = document.getElementById('commentGenerationLoading');
+            const loadingText = document.getElementById('commentLoadingText');
             
             // 버튼 비활성화 및 로딩 표시
             generateBtn.disabled = true;
@@ -4384,6 +4420,18 @@
             console.log('=== displayAnalysisResults 시작 ===');
             console.log('입력 데이터:', JSON.stringify(data, null, 2));
             
+            // 한글 필드명을 영어로 매핑
+            const mappedData = {
+                topic: data['주제'] || data.topic,
+                emotion: data['감정'] || data.emotion,
+                summary: data['핵심내용'] || data.summary,
+                comment_points: data['댓글포인트'] || data.comment_points,
+                comment_type: data['필요댓글유형'] || data.comment_type,
+                product_type: data['상품추천유형'] || data.product_type
+            };
+            
+            console.log('매핑된 데이터:', mappedData);
+            
             // 분석 결과 컨테이너 찾기
             const analysisResultsContainer = document.getElementById('analysisResults');
             console.log('analysisResults 컨테이너:', analysisResultsContainer);
@@ -4400,63 +4448,82 @@
             console.log('analysisResultsHeader:', analysisResultsHeader);
             console.log('resultsInfo:', resultsInfo);
             
-            if (resultsInfo) {
-                const infoText = `✅ 주제: ${data.topic || '분석 중'} | 감정: ${data.emotion || '분석 중'} | 댓글유형: ${data.comment_type || '일반'}`;
-                resultsInfo.innerHTML = infoText;
-                console.log('results-info 업데이트 완료:', infoText);
-            } else {
-                console.log('results-info 요소를 찾을 수 없음');
-            }
-            
-            // HTML 생성
-            let html = '<div class="keyword-category">';
-            html += '<div class="category-header">';
-            html += '<h4>📊 분석 결과</h4>';
-            html += '</div>';
-            html += '<div class="keywords-list">';
-            
             console.log('각 필드 확인:');
-            console.log('- topic:', data.topic);
-            console.log('- emotion:', data.emotion);
-            console.log('- summary:', data.summary);
-            console.log('- comment_points:', data.comment_points);
-            console.log('- comment_type:', data.comment_type);
-            console.log('- product_type:', data.product_type);
+            console.log('- topic:', mappedData.topic);
+            console.log('- emotion:', mappedData.emotion);
+            console.log('- summary:', mappedData.summary);
+            console.log('- comment_points:', mappedData.comment_points);
+            console.log('- comment_type:', mappedData.comment_type);
+            console.log('- product_type:', mappedData.product_type);
             
-            if (data.topic) {
-                html += `<div class="keyword-tag"><strong>주제:</strong> ${data.topic}</div>`;
+            if (resultsInfo) {
+                // results-info는 비워두기
+                resultsInfo.innerHTML = '';
+                console.log('results-info 비움');
             }
             
-            if (data.emotion) {
-                html += `<div class="keyword-tag"><strong>감정:</strong> ${data.emotion}</div>`;
+            // 기존 키워드 카테고리 카드 스타일과 일관성 있게 표시
+            let html = '';
+            
+            if (mappedData.topic) {
+                html += `<div class="keyword-category-card">
+                    <div class="category-header">
+                        <h5 class="category-name">🎯 주제</h5>
+                    </div>
+                    <div style="color: rgba(255,255,255,0.9); line-height: 1.5; padding: 0.5rem 0;">${mappedData.topic}</div>
+                </div>`;
             }
             
-            if (data.summary) {
-                html += `<div class="keyword-tag" style="width: 100%; white-space: normal;"><strong>핵심내용:</strong> ${data.summary}</div>`;
+            if (mappedData.emotion) {
+                html += `<div class="keyword-category-card">
+                    <div class="category-header">
+                        <h5 class="category-name">💭 감정 분석</h5>
+                    </div>
+                    <div style="color: rgba(255,255,255,0.9); line-height: 1.5; padding: 0.5rem 0;">${mappedData.emotion}</div>
+                </div>`;
             }
             
-            if (data.comment_points) {
-                html += `<div class="keyword-tag" style="width: 100%; white-space: normal;"><strong>댓글포인트:</strong> ${data.comment_points}</div>`;
+            if (mappedData.summary) {
+                html += `<div class="keyword-category-card">
+                    <div class="category-header">
+                        <h5 class="category-name">📝 핵심 내용</h5>
+                    </div>
+                    <div style="color: rgba(255,255,255,0.9); line-height: 1.5; padding: 0.5rem 0;">${mappedData.summary}</div>
+                </div>`;
             }
             
-            if (data.comment_type) {
-                html += `<div class="keyword-tag"><strong>필요댓글유형:</strong> ${data.comment_type}</div>`;
+            if (mappedData.comment_points) {
+                html += `<div class="keyword-category-card">
+                    <div class="category-header">
+                        <h5 class="category-name">💬 댓글 포인트</h5>
+                    </div>
+                    <div style="color: rgba(255,255,255,0.9); line-height: 1.5; padding: 0.5rem 0;">${mappedData.comment_points}</div>
+                </div>`;
             }
             
-            if (data.product_type && data.product_type.trim()) {
-                html += `<div class="keyword-tag"><strong>상품추천유형:</strong> ${data.product_type}</div>`;
+            if (mappedData.comment_type) {
+                html += `<div class="keyword-category-card">
+                    <div class="category-header">
+                        <h5 class="category-name">🏷️ 필요 댓글 유형</h5>
+                    </div>
+                    <div style="color: rgba(255,255,255,0.9); line-height: 1.5; padding: 0.5rem 0;">
+                        <span class="keyword-tag" style="display: inline-block; margin: 0;">${mappedData.comment_type}</span>
+                    </div>
+                </div>`;
             }
             
-            html += '</div></div>';
-            console.log('생성된 HTML 길이:', html.length);
-            console.log('생성된 HTML 미리보기:', html.substring(0, 200) + '...');
+            if (mappedData.product_type && mappedData.product_type.trim()) {
+                html += `<div class="keyword-category-card">
+                    <div class="category-header">
+                        <h5 class="category-name">🛍️ 상품 추천 유형</h5>
+                    </div>
+                    <div style="color: rgba(255,255,255,0.9); line-height: 1.5; padding: 0.5rem 0;">
+                        <span class="keyword-tag" style="display: inline-block; margin: 0;">${mappedData.product_type}</span>
+                    </div>
+                </div>`;
+            }
             
-            // 컨테이너에 HTML 삽입
             analysisResultsContainer.innerHTML = html;
-            console.log('HTML 삽입 완료');
-            
-            // 삽입 후 확인
-            console.log('삽입 후 컨테이너 내용:', analysisResultsContainer.innerHTML.substring(0, 200) + '...');
             console.log('=== displayAnalysisResults 완료 ===');
         }
 

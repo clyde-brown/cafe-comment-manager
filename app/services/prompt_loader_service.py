@@ -115,13 +115,15 @@ class PromptLoaderService:
             if not template_str:
                 return None
 
-            # 템플릿 변수 치환
-            template = Template(template_str)
-            formatted_prompt = template.safe_substitute(**kwargs)
+            # {variable} 형식의 템플릿 변수 치환 (Python str.format 사용)
+            formatted_prompt = template_str.format(**kwargs)
 
             logger.debug(f"프롬프트 포맷팅 완료: {category}.{prompt_name}")
             return formatted_prompt
 
+        except KeyError as e:
+            logger.error(f"프롬프트 변수 누락: {e}")
+            return None
         except Exception as e:
             logger.error(f"프롬프트 포맷팅 실패: {e}")
             return None
