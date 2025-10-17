@@ -31,8 +31,17 @@ class KeywordExpansionRequest(BaseModel):
     )
 
 
+class KeywordCategory(BaseModel):
+    """키워드 카테고리 모델"""
+
+    key: str = Field(..., description="카테고리 키 (예: 유사어, 감정연결)")
+    values: List[str] = Field(
+        default_factory=list, description="해당 카테고리의 키워드 목록"
+    )
+
+
 class KeywordsByCategory(BaseModel):
-    """카테고리별 키워드 모델"""
+    """카테고리별 키워드 모델 (하위 호환성을 위해 유지)"""
 
     직설적: List[str] = Field(default_factory=list, description="직설적 키워드")
     문제_니즈: List[str] = Field(
@@ -50,8 +59,11 @@ class KeywordExpansionResponse(BaseModel):
 
     success: bool = Field(..., description="성공 여부")
     target_keyword: str = Field(..., description="입력된 타겟 키워드")
-    keywords: Optional[KeywordsByCategory] = Field(
-        None, description="카테고리별 확장된 키워드"
+    keywords: Optional[List[KeywordCategory]] = Field(
+        None, description="카테고리별 확장된 키워드 (새로운 형식)"
+    )
+    keywords_legacy: Optional[KeywordsByCategory] = Field(
+        None, description="카테고리별 확장된 키워드 (기존 형식, 하위 호환성)"
     )
     total_count: int = Field(0, description="총 생성된 키워드 개수")
     processing_time: float = Field(0.0, description="처리 시간 (초)")

@@ -1230,25 +1230,28 @@
         /* 액션 버튼 영역 */
         .keyword-input-section .action-buttons {
             display: flex !important;
-            gap: 0.8rem;
+            gap: 0.6rem;
             margin-top: 1.2rem;
             justify-content: center;
             text-align: center !important;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+            align-items: center;
         }
 
         .keyword-input-section .expand-btn {
             background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%) !important;
             color: white !important;
-            padding: 1rem 2rem !important;
+            padding: 0.9rem 1.4rem !important;
             border: none !important;
             border-radius: 10px !important;
-            font-size: 1rem !important;
+            font-size: 0.9rem !important;
             font-weight: bold !important;
             cursor: pointer !important;
             transition: all 0.3s ease !important;
             box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4) !important;
-            min-width: 160px;
+            min-width: 110px;
+            height: 48px;
+            white-space: nowrap;
         }
 
         .keyword-input-section .expand-btn:hover:not(:disabled) {
@@ -1264,15 +1267,17 @@
         .keyword-input-section .mockup-btn {
             background: linear-gradient(135deg, #9C27B0 0%, #8E24AA 100%) !important;
             color: white !important;
-            padding: 1rem 1.5rem !important;
+            padding: 0.9rem 1.4rem !important;
             border: none !important;
             border-radius: 10px !important;
-            font-size: 1rem !important;
+            font-size: 0.9rem !important;
             font-weight: bold !important;
             cursor: pointer !important;
             transition: all 0.3s ease !important;
             box-shadow: 0 6px 20px rgba(156, 39, 176, 0.4) !important;
-            min-width: 140px;
+            min-width: 110px;
+            height: 48px;
+            white-space: nowrap;
         }
 
         .keyword-input-section .mockup-btn:hover {
@@ -1280,8 +1285,29 @@
             box-shadow: 0 8px 25px rgba(156, 39, 176, 0.5) !important;
         }
 
-        .keyword-input-section .clear-btn {
-            background: linear-gradient(135deg, #FF6B6B 0%, #EE5A52 100%) !important;
+        .keyword-input-section .add-btn {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%) !important;
+            color: white !important;
+            padding: 0.9rem 1.4rem !important;
+            border: none !important;
+            border-radius: 10px !important;
+            font-size: 0.9rem !important;
+            font-weight: bold !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4) !important;
+            min-width: 80px;
+            height: 48px;
+            white-space: nowrap;
+        }
+
+        .keyword-input-section .add-btn:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.5) !important;
+        }
+
+        .keyword-input-section .add-target-btn {
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%) !important;
             color: white !important;
             padding: 1rem 1.5rem !important;
             border: none !important;
@@ -1290,8 +1316,94 @@
             font-weight: bold !important;
             cursor: pointer !important;
             transition: all 0.3s ease !important;
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4) !important;
+            min-width: 140px;
+        }
+
+        .keyword-input-section .add-target-btn:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5) !important;
+        }
+
+        /* 수동 추가 섹션 */
+        .manual-add-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .manual-add-header {
+            margin-bottom: 0.8rem;
+        }
+
+        .manual-add-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .manual-add-input-group {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .manual-keyword-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .manual-keyword-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .manual-keyword-input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+        }
+
+        .add-target-btn-small {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .add-target-btn-small:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+        }
+
+        .keyword-input-section .clear-btn {
+            background: linear-gradient(135deg, #FF6B6B 0%, #EE5A52 100%) !important;
+            color: white !important;
+            padding: 0.9rem 1.4rem !important;
+            border: none !important;
+            border-radius: 10px !important;
+            font-size: 0.9rem !important;
+            font-weight: bold !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
             box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4) !important;
-            min-width: 120px;
+            min-width: 80px;
+            height: 48px;
+            white-space: nowrap;
         }
 
         .keyword-input-section .clear-btn:hover {
@@ -1515,6 +1627,406 @@
             box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
         }
 
+        /* 선택된 키워드 섹션 */
+        .selected-keywords-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-top: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .selected-keywords-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .selected-keywords-header h4 {
+            color: white;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .selected-count {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .selected-keywords-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            margin-bottom: 1rem;
+            min-height: 2rem;
+        }
+
+        .selected-keyword-item {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            border: 1px solid #4CAF50;
+            box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+        }
+
+        .selected-keyword-item .remove-btn {
+            cursor: pointer;
+            opacity: 0.7;
+            font-size: 0.7rem;
+        }
+
+        .selected-keyword-item .remove-btn:hover {
+            opacity: 1;
+        }
+
+        .selected-keywords-actions {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+        }
+
+        .save-selected-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 0.7rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .save-selected-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+        }
+
+        .clear-selected-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.7rem 1.2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .clear-selected-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* 상품 키워드 입력 섹션 */
+        .product-keyword-input-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-header {
+            margin-bottom: 1rem;
+        }
+
+        .input-header h3 {
+            color: white;
+            font-size: 1.1rem;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .input-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .product-keyword-input-container {
+            margin-top: 1rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        #productKeywordInput {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #productKeywordInput::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        #productKeywordInput:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+        }
+
+        .add-product-keyword-btn {
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .add-product-keyword-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+        }
+
+        /* 저장된 키워드 관리 섹션 */
+        .saved-keywords-management {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .management-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .management-header h3 {
+            color: white;
+            font-size: 1.1rem;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .management-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .saved-keywords-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .saved-category {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .saved-category .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .saved-category h4 {
+            color: white;
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .keyword-count {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .saved-keywords-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            min-height: 2.5rem;
+            align-items: flex-start;
+            align-content: flex-start;
+        }
+
+        .empty-keywords {
+            color: rgba(255, 255, 255, 0.5);
+            font-style: italic;
+            font-size: 0.8rem;
+            text-align: center;
+            width: 100%;
+            padding: 0.8rem;
+        }
+
+        .saved-keyword-item {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+        }
+
+        .saved-keyword-item.product-keyword {
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+            box-shadow: 0 2px 4px rgba(255, 152, 0, 0.3);
+        }
+
+        .saved-keyword-item .remove-saved-btn {
+            cursor: pointer;
+            opacity: 0.8;
+            font-size: 0.7rem;
+            margin-left: 0.2rem;
+        }
+
+        .saved-keyword-item .remove-saved-btn:hover {
+            opacity: 1;
+        }
+
+        .saved-keywords-actions {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+        }
+
+        .save-keywords-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 0.5rem;
+        }
+
+        .save-keywords-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+        }
+
+        .export-all-btn {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .export-all-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+        }
+
+        .clear-all-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .clear-all-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .saved-keywords-content {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .input-group {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+            
+            #productKeywordInput {
+                width: 100%;
+            }
+            
+            .saved-keywords-actions {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.8rem;
+            }
+
+            .detection-notification {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                min-width: auto;
+                padding: 1rem 1.2rem;
+            }
+
+            .detection-notification .notification-text {
+                font-size: 0.85rem;
+            }
+            
+            /* 액션 버튼 모바일 반응형 */
+            .keyword-input-section .action-buttons {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            
+            .keyword-input-section .expand-btn,
+            .keyword-input-section .mockup-btn,
+            .keyword-input-section .add-btn,
+            .keyword-input-section .clear-btn {
+                min-width: 90px;
+                padding: 0.8rem 1rem !important;
+                font-size: 0.8rem !important;
+                height: 42px;
+                white-space: nowrap;
+            }
+        }
+
         /* 빈 상태 및 에러 상태 */
         .empty-state,
         .error-state {
@@ -1589,6 +2101,37 @@
         }
 
         .copy-notification.fade-out {
+            animation: fadeOut 0.3s ease-out;
+        }
+
+        /* 탐지 시작 알림 스타일 */
+        .detection-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+            color: white;
+            padding: 1.2rem 1.8rem;
+            border-radius: 12px;
+            font-weight: 500;
+            z-index: 1000;
+            animation: slideInRight 0.3s ease-out;
+            box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
+            max-width: 400px;
+            min-width: 300px;
+        }
+
+        .detection-notification .notification-icon {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .detection-notification .notification-text {
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .detection-notification.fade-out {
             animation: fadeOut 0.3s ease-out;
         }
 
@@ -1684,6 +2227,21 @@
             border: 1px solid rgba(255, 255, 255, 0.15) !important;
             user-select: none !important;
             margin: 0.1rem !important;
+            position: relative !important;
+        }
+
+        .keyword-tag.selected {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%) !important;
+            border-color: #4CAF50 !important;
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4) !important;
+            transform: translateY(-1px) !important;
+        }
+
+        .keyword-tag.selected::after {
+            content: '✓' !important;
+            margin-left: 0.3rem !important;
+            font-size: 0.7rem !important;
+            opacity: 0.9 !important;
         }
 
         .keyword-tag:hover {
@@ -1750,6 +2308,7 @@
                 gap: 0.3rem;
             }
         }
+
     </style>
 </head>
 <body>
@@ -1818,71 +2377,6 @@
         </div>
     </div>
 
-    <!-- 🤖 기사 리액션 AI 봇 섹션 -->
-    <div class="ai-reaction-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>🏠 카페 댓글 자동 생성기</h2>
-                <p class="section-description">카페 게시글을 입력하면 AI가 자연스러운 댓글을 자동으로 생성해드립니다. 다양한 스타일의 댓글로 카페 활동을 더욱 활발하게!</p>
-            </div>
-
-            <div class="ai-content-wrapper">
-                <!-- 왼쪽: 기사 입력 영역 -->
-                <div class="article-input-section">
-                    <div class="input-header">
-                        <h3>📝 카페 게시글 입력</h3>
-                        <button type="button" class="clear-btn" onclick="clearArticle()">🗑️ 초기화</button>
-                    </div>
-                    
-                    <div class="article-input-container">
-                        <textarea 
-                            id="articleInput" 
-                            placeholder="댓글을 달고 싶은 카페 게시글을 여기에 붙여넣어 주세요...
-
-예시:
-제목: 직장 상사와의 갈등으로 고민입니다 😢
-
-안녕하세요 카페 회원 여러분..
-요즘 직장에서 상사와 갈등이 심해져서 너무 스트레스받고 있어요.
-매일 작은 일로도 지적받고, 다른 동료들 앞에서 망신당하기도 하고..
-이직을 고려하고 있는데 경력이 짧아서 쉽지 않을 것 같아요.
-비슷한 경험 있으신 분들 조언 부탁드려요 ㅠㅠ"
-                            rows="20"
-                        ></textarea>
-                    </div>
-
-                    <div class="action-buttons">
-                        <button type="button" id="analyzeBtn" class="analyze-btn" onclick="analyzeArticle()">
-                            🏠 카페 댓글 생성
-                        </button>
-                    </div>
-
-                    <div class="loading" id="reactionLoading" style="display: none;">
-                        <div class="spinner"></div>
-                        <p>AI가 카페 댓글을 생성하고 있습니다...</p>
-                    </div>
-                </div>
-
-                <!-- 오른쪽: 리액션 결과 영역 -->
-                <div class="reaction-results-section">
-                    <div class="results-header">
-                        <h3>💬 생성된 카페 댓글</h3>
-                        <div class="results-info">
-                            댓글 생성이 완료되면 여기에 결과가 표시됩니다
-                        </div>
-                    </div>
-                    
-                    <div class="reaction-results-container" id="reactionResults">
-                        <!-- AI 분석 결과가 여기에 표시됩니다 -->
-                        <div class="empty-state">
-                            <div class="empty-icon">🤖</div>
-                            <div class="empty-text">카페 게시글을 입력하고 댓글 생성 버튼을 눌러주세요</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- ⚙️ LLM 설정 섹션 -->
     <div class="llm-settings-section">
@@ -2013,6 +2507,19 @@
                             class="keyword-input"
                         />
                         
+                        <!-- 타겟 키워드 수동 추가 영역 -->
+                        <div class="manual-add-section">
+                            <div class="manual-add-header">
+                                <span class="manual-add-label">🎯 타겟 키워드 수동 추가</span>
+                            </div>
+                            <div class="manual-add-input-group">
+                                <input type="text" id="manualTargetKeywordInput" placeholder="수동으로 추가할 타겟 키워드를 입력하세요" class="manual-keyword-input" />
+                                <button type="button" class="add-target-btn-small" onclick="addTargetKeyword()">
+                                    ➕ 추가
+                                </button>
+                            </div>
+                        </div>
+                        
                         <div class="keyword-count-selector">
                             <label for="keywordCountSelect">생성할 키워드 개수:</label>
                             <select id="keywordCountSelect" class="count-select">
@@ -2037,13 +2544,16 @@
 
                     <div class="action-buttons">
                         <button type="button" id="expandKeywordBtn" class="expand-btn" onclick="expandKeyword()">
-                            🔍 키워드 확장
+                            키워드 확장
                         </button>
                         <button type="button" class="mockup-btn" onclick="loadMockupKeywords()">
-                            🎭 Mockup 데이터
+                            Mockup 데이터
+                        </button>
+                        <button type="button" class="add-btn" onclick="addTargetKeywordFromInput()">
+                            추가
                         </button>
                         <button type="button" class="clear-btn" onclick="clearKeyword()">
-                            🗑️ 초기화
+                            초기화
                         </button>
                     </div>
 
@@ -2071,8 +2581,169 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 상품 키워드 입력 영역 -->
+            <div class="product-keyword-input-section">
+                <div class="input-header">
+                    <h3>🏷️ 상품 키워드 직접 입력</h3>
+                    <p class="input-description">상품과 관련된 키워드를 직접 입력하여 추가하세요</p>
+                </div>
+                
+                <div class="product-keyword-input-container">
+                    <div class="input-group">
+                        <input type="text" id="productKeywordInput" placeholder="상품 키워드를 입력하세요 (예: 여름원피스, 시원한 소재)" />
+                        <button type="button" class="add-product-keyword-btn" onclick="addProductKeyword()">
+                            ➕ 추가
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 저장된 키워드 관리 영역 -->
+            <div class="saved-keywords-management" id="savedKeywordsManagement">
+                <div class="management-header">
+                    <h3>💾 저장된 키워드 관리</h3>
+                    <p class="management-description">선택한 키워드와 상품 키워드를 통합 관리하세요</p>
+                </div>
+
+                <div class="saved-keywords-content">
+                    <!-- 확장 키워드 영역 -->
+                    <div class="saved-category">
+                        <div class="category-header">
+                            <h4>🔍 확장 키워드</h4>
+                            <span class="keyword-count" id="expandedKeywordCount">0개</span>
+                        </div>
+                        <div class="saved-keywords-container" id="savedExpandedKeywords">
+                            <div class="empty-keywords">저장된 확장 키워드가 없습니다.</div>
+                        </div>
+                    </div>
+
+                    <!-- 상품 키워드 영역 -->
+                    <div class="saved-category">
+                        <div class="category-header">
+                            <h4>🏷️ 상품 키워드</h4>
+                            <span class="keyword-count" id="productKeywordCount">0개</span>
+                        </div>
+                        <div class="saved-keywords-container" id="savedProductKeywords">
+                            <div class="empty-keywords">저장된 상품 키워드가 없습니다.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 통합 관리 버튼 -->
+                <div class="saved-keywords-actions">
+                    <button class="save-keywords-btn" onclick="saveKeywordsAndStartDetection()">
+                        💾 저장하고 탐지 시작
+                    </button>
+                    <button class="export-all-btn" onclick="exportAllKeywords()">
+                        📤 전체 키워드 내보내기
+                    </button>
+                    <button class="clear-all-btn" onclick="clearAllSavedKeywords()">
+                        🗑️ 전체 초기화
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- 📝 게시글 분석 및 댓글 자동생성 섹션 -->
+    <div class="keyword-expansion-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>📝 게시글 분석 및 댓글 자동생성</h2>
+                <p class="section-description">게시글을 분석하고 AI가 자연스러운 댓글을 자동으로 생성해드립니다</p>
+            </div>
+
+            <div class="keyword-content-wrapper">
+                <!-- 왼쪽: 게시글 입력 영역 -->
+                <div class="keyword-input-section">
+                    <div class="input-header">
+                        <h3>📄 게시글 입력</h3>
+                        <button type="button" class="clear-btn" onclick="clearPostInput()">🗑️ 초기화</button>
+                    </div>
+                    
+                    <div class="keyword-input-container">
+                        <div class="input-group" style="margin-bottom: 1rem;">
+                            <label for="postTitle" style="display: block; color: white; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">게시글 제목</label>
+                            <input 
+                                type="text" 
+                                id="postTitle" 
+                                placeholder="게시글 제목을 입력하세요..."
+                                class="keyword-input"
+                                style="margin-bottom: 0;"
+                            />
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="postContent" style="display: block; color: white; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">게시글 본문</label>
+                            <textarea 
+                                id="postContent" 
+                                placeholder="게시글 본문을 입력하세요...
+
+예시:
+안녕하세요 카페 회원 여러분!
+요즘 직장에서 상사와 갈등이 심해져서 너무 스트레스받고 있어요.
+매일 작은 일로도 지적받고, 다른 동료들 앞에서 망신당하기도 하고..
+이직을 고려하고 있는데 경력이 짧아서 쉽지 않을 것 같아요.
+비슷한 경험 있으신 분들 조언 부탁드려요 ㅠㅠ"
+                                rows="12"
+                                class="keyword-input"
+                                style="resize: vertical; min-height: 200px; font-family: inherit; line-height: 1.5;"
+                            ></textarea>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="button" id="analyzePostBtn" class="expand-btn" onclick="analyzePost()">
+                            🔍 게시글 분석
+                        </button>
+                        <button type="button" id="generateCommentsBtn" class="expand-btn" onclick="generateComments()" disabled style="opacity: 0.6; cursor: not-allowed;">
+                            💬 댓글 자동생성
+                        </button>
+                    </div>
+
+                    <div class="loading" id="postAnalysisLoading" style="display: none;">
+                        <div class="spinner"></div>
+                        <p id="loadingText">게시글을 분석하고 있습니다...</p>
+                    </div>
+                </div>
+
+                <!-- 오른쪽: 분석 결과 및 댓글 생성 결과 영역 -->
+                <div class="keyword-results-section">
+                    <!-- 분석 결과 영역 -->
+                    <div class="results-header">
+                        <h3>🔍 분석 결과</h3>
+                        <div class="results-info">
+                            게시글 분석이 완료되면 여기에 결과가 표시됩니다
+                        </div>
+                    </div>
+                    
+                    <div class="keyword-results-container" id="analysisResults" style="max-height: 300px; overflow-y: auto; margin-bottom: 1.5rem;">
+                        <div class="empty-state">
+                            <div class="empty-icon">📊</div>
+                            <div class="empty-text">게시글을 입력하고 분석 버튼을 눌러주세요</div>
+                        </div>
+                    </div>
+
+                    <!-- 댓글 생성 결과 영역 -->
+                    <div class="results-header">
+                        <h3>💬 생성된 댓글</h3>
+                        <div class="results-info">
+                            댓글 생성이 완료되면 여기에 결과가 표시됩니다
+                        </div>
+                    </div>
+                    
+                    <div class="keyword-results-container" id="commentsResults" style="max-height: 400px; overflow-y: auto;">
+                        <div class="empty-state">
+                            <div class="empty-icon">🤖</div>
+                            <div class="empty-text">먼저 게시글을 분석한 후 댓글 생성 버튼을 눌러주세요</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <script>
         // 드래그 앤 드롭 이벤트 핸들러
@@ -2569,288 +3240,8 @@
             }
         }
 
-        // 🏠 카페 댓글 자동 생성 관련 함수들
-        async function analyzeArticle() {
-            const articleText = document.getElementById('articleInput').value.trim();
-            const reactionContainer = document.getElementById('reactionResults');
-            const analyzeBtn = document.getElementById('analyzeBtn');
-            const loadingDiv = document.getElementById('reactionLoading');
 
-            if (!articleText) {
-                showReactionError('카페 게시글 내용을 입력해주세요.');
-                return;
-            }
 
-            // 버튼 비활성화 및 로딩 표시
-            analyzeBtn.disabled = true;
-            analyzeBtn.textContent = '댓글 생성 중...';
-            loadingDiv.style.display = 'block';
-            reactionContainer.innerHTML = '';
-
-            try {
-                // 실제 API 호출 (개발 중에는 모의 데이터 사용)
-                const mockComments = generateMockCafeComments(articleText);
-                displayCafeComments(mockComments);
-                
-                // 실제 API 호출 코드 (주석 해제하여 사용)
-                /*
-                const response = await fetch('/api/cafe/comments', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        article_text: articleText,
-                        comment_styles: ["공감형", "질문형", "조언형", "친근형", "경험공유형"],
-                        max_comments: 5,
-                        tone_style: "친근한톤"
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    displayCafeComments(data);
-                } else {
-                    showReactionError(data.message || '댓글 생성 중 오류가 발생했습니다.');
-                }
-                */
-                
-            } catch (error) {
-                console.error('댓글 생성 오류:', error);
-                showReactionError('댓글 생성 중 오류가 발생했습니다.');
-            } finally {
-                // 버튼 재활성화
-                analyzeBtn.disabled = false;
-                analyzeBtn.textContent = '🏠 카페 댓글 생성';
-                loadingDiv.style.display = 'none';
-            }
-        }
-
-        function generateMockCafeComments(postContent) {
-            // 게시글 내용에 따라 적절한 댓글 생성
-            let comments = [];
-            
-            if (postContent.includes('고민') || postContent.includes('스트레스') || postContent.includes('힘들')) {
-                comments = [
-                    { style: '공감형', icon: '👍', content: '정말 힘드시겠어요 ㅠㅠ 저도 비슷한 경험이 있어서 마음이 아프네요. 힘내세요!' },
-                    { style: '질문형', icon: '❓', content: '혹시 HR팀이나 상급자에게 상담을 요청해보신 적은 있나요?' },
-                    { style: '조언형', icon: '💡', content: '상사와의 일대일 대화를 통해 오해를 풀어보시는 것도 좋을 것 같아요. 차분하게 대화해보세요.' },
-                    { style: '친근형', icon: '😊', content: '많이 속상하셨을 것 같아요. 저희가 응원하고 있으니까 너무 스트레스 받지 마세요 💪' },
-                    { style: '경험공유형', icon: '🤝', content: '저도 예전에 비슷한 일이 있었는데, 시간이 지나면서 관계가 개선되더라고요. 포기하지 마세요!' }
-                ];
-            } else if (postContent.includes('맛집') || postContent.includes('추천') || postContent.includes('맛있')) {
-                comments = [
-                    { style: '공감형', icon: '👍', content: '와 정말 맛있어 보이네요! 사진만 봐도 군침이 도네요 🤤' },
-                    { style: '질문형', icon: '❓', content: '혹시 가격대는 어느 정도인가요? 그리고 예약이 필요한가요?' },
-                    { style: '조언형', icon: '💡', content: '좋은 정보 감사해요! 다음에 강남 가면 꼭 가봐야겠어요 ⭐' },
-                    { style: '친근형', icon: '😊', content: '맛집 정보 공유해주셔서 감사해요! 데이트 코스로 딱 좋겠네요 💕' },
-                    { style: '경험공유형', icon: '🤝', content: '저도 이탈리안 음식 좋아하는데 꼭 가봐야겠어요! 추천 감사합니다 🍝' }
-                ];
-            } else if (postContent.includes('노트북') || postContent.includes('구매') || postContent.includes('추천')) {
-                comments = [
-                    { style: '공감형', icon: '👍', content: '노트북 선택 정말 어려우시겠어요! 저도 고민 많이 했었는데 이해해요 😅' },
-                    { style: '질문형', icon: '❓', content: '혹시 들고 다니실 일이 많으신가요? 무게도 중요한 고려사항이에요!' },
-                    { style: '조언형', icon: '💡', content: '용도 보시면 맥북보다는 윈도우 노트북이 더 실용적일 것 같아요. 게임도 고려하시니까요!' },
-                    { style: '친근형', icon: '😊', content: '대학생이시면 학생 할인도 알아보세요! 꽤 할인 폭이 커요 💻' },
-                    { style: '경험공유형', icon: '🤝', content: '저는 LG 그램 쓰는데 가볍고 배터리도 오래가서 만족해요! 참고하세요 😊' }
-                ];
-            } else if (postContent.includes('첫 출근') || postContent.includes('새로운') || postContent.includes('시작')) {
-                comments = [
-                    { style: '공감형', icon: '👍', content: '첫 출근 정말 축하드려요! 새로운 시작이라 설레시겠어요 🎉' },
-                    { style: '질문형', icon: '❓', content: '어떤 분야 회사인가요? 첫날 분위기는 어떠셨어요?' },
-                    { style: '조언형', icon: '💡', content: '처음엔 적응하기 어려우실 수 있지만 금방 익숙해지실 거예요! 화이팅!' },
-                    { style: '친근형', icon: '😊', content: '동료분들이 친절하시다니 다행이네요! 좋은 직장 만나신 것 같아요 💪' },
-                    { style: '경험공유형', icon: '🤝', content: '저도 첫 출근 때 떨렸는데 지금은 잘 적응했어요! 응원할게요 화이팅! 🔥' }
-                ];
-            } else {
-                comments = [
-                    { style: '공감형', icon: '👍', content: '좋은 글 잘 읽었어요! 공감되는 부분이 많네요 😊' },
-                    { style: '질문형', icon: '❓', content: '혹시 더 자세한 이야기도 들려주실 수 있나요?' },
-                    { style: '조언형', icon: '💡', content: '좋은 정보 공유해주셔서 감사해요! 도움이 많이 됐어요' },
-                    { style: '친근형', icon: '😊', content: '글 잘 읽었습니다! 좋은 하루 되세요 ✨' },
-                    { style: '경험공유형', icon: '🤝', content: '저도 비슷한 생각을 하고 있었는데 공감이 많이 되네요!' }
-                ];
-            }
-
-            return {
-                success: true,
-                post_analysis: "게시글 분석이 완료되었습니다.",
-                comments: comments,
-                processing_time: 1.5,
-                message: "카페 댓글 5개가 성공적으로 생성되었습니다."
-            };
-        }
-
-        function generateMockReactions(articleText) {
-            const reactions = [
-                {
-                    type: '감정 분석',
-                    icon: '😊',
-                    result: '긍정적 (85%)',
-                    details: '이 기사는 전반적으로 긍정적인 톤을 가지고 있으며, 희망적인 메시지를 전달합니다.'
-                },
-                {
-                    type: '키워드 추출',
-                    icon: '🔍',
-                    result: '혁신, 기술, 발전, 미래',
-                    details: '주요 키워드들이 기술 혁신과 미래 발전에 관련된 내용임을 보여줍니다.'
-                },
-                {
-                    type: '댓글 제안',
-                    icon: '💬',
-                    result: '3개의 댓글 생성됨',
-                    details: [
-                        '정말 흥미로운 내용이네요! 앞으로의 발전이 기대됩니다. 👍',
-                        '이런 혁신적인 기술이 우리 생활에 어떤 변화를 가져올지 궁금하네요.',
-                        '기사 잘 읽었습니다. 더 자세한 정보가 있으면 좋겠어요! 📚'
-                    ]
-                },
-                {
-                    type: '요약',
-                    icon: '📝',
-                    result: '3줄 요약',
-                    details: [
-                        '• 새로운 기술 혁신이 주목받고 있음',
-                        '• 향후 산업 전반에 긍정적 영향 예상',
-                        '• 지속적인 연구 개발이 필요한 상황'
-                    ]
-                },
-                {
-                    type: '관련 질문',
-                    icon: '❓',
-                    result: '추천 질문 5개',
-                    details: [
-                        '이 기술의 상용화 시기는 언제쯤 예상되나요?',
-                        '기존 기술과 비교했을 때 어떤 장점이 있나요?',
-                        '도입 시 예상되는 비용은 어느 정도인가요?',
-                        '보안이나 안전성 측면에서는 어떤가요?',
-                        '일반 사용자도 쉽게 접근할 수 있을까요?'
-                    ]
-                }
-            ];
-
-            return reactions;
-        }
-
-        function displayCafeComments(data) {
-            const container = document.getElementById('reactionResults');
-            
-            // 게시글 분석 결과 표시
-            const analysisCard = document.createElement('div');
-            analysisCard.className = 'reaction-card analysis-card';
-            analysisCard.innerHTML = `
-                <div class="reaction-header">
-                    <span class="reaction-icon">📊</span>
-                    <span class="reaction-type">게시글 분석</span>
-                    <span class="reaction-result">${data.message}</span>
-                </div>
-                <div class="reaction-details">
-                    <div class="reaction-detail-item">${data.post_analysis}</div>
-                </div>
-            `;
-            container.appendChild(analysisCard);
-
-            // 댓글들 표시
-            data.comments.forEach((comment, index) => {
-                const commentCard = document.createElement('div');
-                commentCard.className = 'reaction-card comment-card';
-                commentCard.style.animationDelay = `${(index + 1) * 0.1}s`;
-
-                commentCard.innerHTML = `
-                    <div class="reaction-header">
-                        <span class="reaction-icon">${comment.icon}</span>
-                        <span class="reaction-type">${comment.style}</span>
-                        <button class="copy-btn" onclick="copyComment('${comment.content.replace(/'/g, "\\'")}')">📋 복사</button>
-                    </div>
-                    <div class="reaction-details">
-                        <div class="comment-content">${comment.content}</div>
-                    </div>
-                `;
-                
-                container.appendChild(commentCard);
-            });
-
-            // 처리 시간 표시
-            const timeInfo = document.createElement('div');
-            timeInfo.className = 'processing-time';
-            timeInfo.textContent = `처리 시간: ${data.processing_time}초`;
-            container.appendChild(timeInfo);
-        }
-
-        function copyComment(commentText) {
-            navigator.clipboard.writeText(commentText).then(() => {
-                // 복사 성공 알림
-                const notification = document.createElement('div');
-                notification.className = 'copy-notification';
-                notification.textContent = '댓글이 클립보드에 복사되었습니다!';
-                notification.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    background: #4CAF50;
-                    color: white;
-                    padding: 10px 20px;
-                    border-radius: 5px;
-                    z-index: 1000;
-                    animation: slideIn 0.3s ease-out;
-                `;
-                
-                document.body.appendChild(notification);
-                
-                setTimeout(() => {
-                    notification.remove();
-                }, 2000);
-            }).catch(err => {
-                console.error('복사 실패:', err);
-                alert('댓글 복사에 실패했습니다.');
-            });
-        }
-
-        function displayReactions(reactions) {
-            const container = document.getElementById('reactionResults');
-            
-            reactions.forEach((reaction, index) => {
-                const reactionCard = document.createElement('div');
-                reactionCard.className = 'reaction-card';
-                reactionCard.style.animationDelay = `${index * 0.1}s`;
-
-                let detailsHtml = '';
-                if (Array.isArray(reaction.details)) {
-                    detailsHtml = reaction.details.map(detail => `<div class="reaction-detail-item">${detail}</div>`).join('');
-                } else {
-                    detailsHtml = `<div class="reaction-detail-item">${reaction.details}</div>`;
-                }
-
-                reactionCard.innerHTML = `
-                    <div class="reaction-header">
-                        <span class="reaction-icon">${reaction.icon}</span>
-                        <h4 class="reaction-type">${reaction.type}</h4>
-                    </div>
-                    <div class="reaction-result">${reaction.result}</div>
-                    <div class="reaction-details">
-                        ${detailsHtml}
-                    </div>
-                `;
-
-                container.appendChild(reactionCard);
-            });
-        }
-
-        function showReactionError(message) {
-            const container = document.getElementById('reactionResults');
-            container.innerHTML = `
-                <div class="reaction-error">
-                    <span class="error-icon">⚠️</span>
-                    <span class="error-message">${message}</span>
-                </div>
-            `;
-        }
-
-        function clearArticle() {
-            document.getElementById('articleInput').value = '';
-            document.getElementById('reactionResults').innerHTML = '';
-        }
 
         // ========================================
         // ⚙️ LLM 설정 관련 함수들
@@ -3212,7 +3603,7 @@
                     
                     category.values.forEach((keyword, index) => {
                         html += `
-                            <span class="keyword-tag" onclick="copyKeyword('${keyword.replace(/'/g, "\\'")}')">
+                            <span class="keyword-tag" onclick="toggleKeywordSelection(this, '${keyword.replace(/'/g, "\\'")}')">
                                 ${keyword}
                             </span>
                         `;
@@ -3226,18 +3617,36 @@
             });
 
             // 전체 복사 버튼
-            // const allKeywords = keywordCategories.reduce((acc, category) => {
-            //     acc[category.key] = category.values;
-            //     return acc;
-            // }, {});
+            const allKeywords = keywordCategories.reduce((acc, category) => {
+                acc[category.key] = category.values;
+                return acc;
+            }, {});
             
-            // html += `
-            //     <div class="keyword-actions">
-            //         <button class="copy-all-btn" onclick="copyAllKeywords(${JSON.stringify(allKeywords).replace(/"/g, '&quot;')})">
-            //             📋 전체 키워드 복사
-            //         </button>
-            //     </div>
-            // `;
+            html += `
+                <div class="keyword-actions">
+                    <button class="copy-all-btn" onclick="copyAllKeywords(${JSON.stringify(allKeywords).replace(/"/g, '&quot;')})">
+                        📋 전체 키워드 복사
+                    </button>
+                </div>
+                
+                <div class="selected-keywords-section" id="selectedKeywordsSection" style="display: none;">
+                    <div class="selected-keywords-header">
+                        <h4>🎯 선택된 키워드</h4>
+                        <span class="selected-count" id="selectedCount">0개 선택됨</span>
+                    </div>
+                    <div class="selected-keywords-container" id="selectedKeywordsContainer">
+                        <!-- 선택된 키워드들이 여기에 표시됩니다 -->
+                    </div>
+                    <div class="selected-keywords-actions">
+                        <button class="save-selected-btn" onclick="saveSelectedKeywords()">
+                            💾 선택된 키워드 저장
+                        </button>
+                        <button class="clear-selected-btn" onclick="clearSelectedKeywords()">
+                            🗑️ 선택 초기화
+                        </button>
+                    </div>
+                </div>
+            `;
 
             resultsDiv.innerHTML = html;
         }
@@ -3261,6 +3670,9 @@
                     <div class="empty-text">타겟 키워드를 입력하고 확장 버튼을 눌러주세요</div>
                 </div>
             `;
+            
+            // 선택된 키워드도 초기화
+            clearSelectedKeywords();
         }
 
         function loadMockupKeywords() {
@@ -3344,6 +3756,337 @@
             };
         }
 
+        // 선택된 키워드를 저장할 Set
+        let selectedKeywords = new Set();
+        
+        // 저장된 키워드들을 관리할 Set
+        let savedExpandedKeywords = new Set();
+        let savedProductKeywords = new Set();
+
+        function toggleKeywordSelection(element, keyword) {
+            if (selectedKeywords.has(keyword)) {
+                // 선택 해제
+                selectedKeywords.delete(keyword);
+                element.classList.remove('selected');
+            } else {
+                // 선택
+                selectedKeywords.add(keyword);
+                element.classList.add('selected');
+            }
+            
+            updateSelectedKeywordsDisplay();
+        }
+
+        function updateSelectedKeywordsDisplay() {
+            const selectedSection = document.getElementById('selectedKeywordsSection');
+            const selectedContainer = document.getElementById('selectedKeywordsContainer');
+            const selectedCount = document.getElementById('selectedCount');
+            
+            if (selectedKeywords.size === 0) {
+                selectedSection.style.display = 'none';
+                return;
+            }
+            
+            selectedSection.style.display = 'block';
+            selectedCount.textContent = `${selectedKeywords.size}개 선택됨`;
+            
+            let html = '';
+            selectedKeywords.forEach(keyword => {
+                html += `
+                    <div class="selected-keyword-item">
+                        ${keyword}
+                        <span class="remove-btn" onclick="removeSelectedKeyword('${keyword.replace(/'/g, "\\'")}')">×</span>
+                    </div>
+                `;
+            });
+            
+            selectedContainer.innerHTML = html;
+        }
+
+        function removeSelectedKeyword(keyword) {
+            selectedKeywords.delete(keyword);
+            
+            // 해당 키워드 태그의 선택 상태도 해제
+            const keywordTags = document.querySelectorAll('.keyword-tag');
+            keywordTags.forEach(tag => {
+                if (tag.textContent.trim() === keyword) {
+                    tag.classList.remove('selected');
+                }
+            });
+            
+            updateSelectedKeywordsDisplay();
+        }
+
+        function clearSelectedKeywords() {
+            selectedKeywords.clear();
+            
+            // 모든 키워드 태그의 선택 상태 해제
+            const keywordTags = document.querySelectorAll('.keyword-tag.selected');
+            keywordTags.forEach(tag => {
+                tag.classList.remove('selected');
+            });
+            
+            updateSelectedKeywordsDisplay();
+        }
+
+        function saveSelectedKeywords() {
+            if (selectedKeywords.size === 0) {
+                alert('저장할 키워드를 선택해주세요.');
+                return;
+            }
+            
+            const keywordsArray = Array.from(selectedKeywords);
+            
+            // 저장된 확장 키워드에 추가
+            keywordsArray.forEach(keyword => {
+                if (!savedExpandedKeywords.has(keyword)) {
+                    savedExpandedKeywords.add(keyword);
+                }
+            });
+            
+            // 선택 상태 초기화
+            clearSelectedKeywords();
+            
+            // 저장된 키워드 표시 업데이트
+            updateSavedKeywordsDisplay();
+            
+            showCopyNotification(`${keywordsArray.length}개의 키워드가 저장되었습니다!`);
+        }
+
+        // 타겟 키워드 수동 추가 함수 (확장 키워드로 저장)
+        function addTargetKeyword() {
+            const input = document.getElementById('manualTargetKeywordInput');
+            const keyword = input.value.trim();
+            
+            if (!keyword) {
+                alert('타겟 키워드를 입력해주세요.');
+                input.focus();
+                return;
+            }
+            
+            if (savedExpandedKeywords.has(keyword)) {
+                alert('이미 추가된 키워드입니다.');
+                input.focus();
+                return;
+            }
+            
+            savedExpandedKeywords.add(keyword);
+            input.value = '';
+            updateSavedKeywordsDisplay();
+            showCopyNotification('키워드가 확장 키워드에 추가되었습니다!');
+        }
+
+        // 메인 타겟 키워드 입력에서 추가 함수
+        function addTargetKeywordFromInput() {
+            const input = document.getElementById('targetKeywordInput');
+            const keyword = input.value.trim();
+            
+            if (!keyword) {
+                alert('타겟 키워드를 입력해주세요.');
+                input.focus();
+                return;
+            }
+            
+            if (savedExpandedKeywords.has(keyword)) {
+                alert('이미 추가된 키워드입니다.');
+                input.focus();
+                return;
+            }
+            
+            savedExpandedKeywords.add(keyword);
+            updateSavedKeywordsDisplay();
+            showCopyNotification('키워드가 확장 키워드에 추가되었습니다!');
+        }
+
+        // 상품 키워드 추가 함수
+        function addProductKeyword() {
+            const input = document.getElementById('productKeywordInput');
+            const keyword = input.value.trim();
+            
+            if (!keyword) {
+                alert('상품 키워드를 입력해주세요.');
+                input.focus();
+                return;
+            }
+            
+            if (savedProductKeywords.has(keyword)) {
+                alert('이미 추가된 키워드입니다.');
+                input.focus();
+                return;
+            }
+            
+            savedProductKeywords.add(keyword);
+            input.value = '';
+            updateSavedKeywordsDisplay();
+            showCopyNotification('상품 키워드가 추가되었습니다!');
+        }
+
+        // 저장된 키워드 표시 업데이트
+        function updateSavedKeywordsDisplay() {
+            const expandedContainer = document.getElementById('savedExpandedKeywords');
+            const productContainer = document.getElementById('savedProductKeywords');
+            const expandedCount = document.getElementById('expandedKeywordCount');
+            const productCount = document.getElementById('productKeywordCount');
+            
+            // 확장 키워드 표시 (타겟 키워드 포함)
+            expandedCount.textContent = `${savedExpandedKeywords.size}개`;
+            if (savedExpandedKeywords.size === 0) {
+                expandedContainer.innerHTML = '<div class="empty-keywords">저장된 확장 키워드가 없습니다.</div>';
+            } else {
+                let html = '';
+                savedExpandedKeywords.forEach(keyword => {
+                    html += `
+                        <div class="saved-keyword-item">
+                            ${keyword}
+                            <span class="remove-saved-btn" onclick="removeSavedKeyword('expanded', '${keyword.replace(/'/g, "\\'")}')">×</span>
+                        </div>
+                    `;
+                });
+                expandedContainer.innerHTML = html;
+            }
+            
+            // 상품 키워드 표시
+            productCount.textContent = `${savedProductKeywords.size}개`;
+            if (savedProductKeywords.size === 0) {
+                productContainer.innerHTML = '<div class="empty-keywords">저장된 상품 키워드가 없습니다.</div>';
+            } else {
+                let html = '';
+                savedProductKeywords.forEach(keyword => {
+                    html += `
+                        <div class="saved-keyword-item product-keyword">
+                            ${keyword}
+                            <span class="remove-saved-btn" onclick="removeSavedKeyword('product', '${keyword.replace(/'/g, "\\'")}')">×</span>
+                        </div>
+                    `;
+                });
+                productContainer.innerHTML = html;
+            }
+        }
+
+        // 저장된 키워드 제거
+        function removeSavedKeyword(type, keyword) {
+            if (type === 'expanded') {
+                savedExpandedKeywords.delete(keyword);
+            } else if (type === 'product') {
+                savedProductKeywords.delete(keyword);
+            }
+            updateSavedKeywordsDisplay();
+        }
+
+        // 전체 키워드 내보내기
+        function exportAllKeywords() {
+            const allKeywords = [];
+            
+            if (savedExpandedKeywords.size > 0) {
+                allKeywords.push('=== 확장 키워드 ===');
+                savedExpandedKeywords.forEach(keyword => allKeywords.push(keyword));
+                allKeywords.push('');
+            }
+            
+            if (savedProductKeywords.size > 0) {
+                allKeywords.push('=== 상품 키워드 ===');
+                savedProductKeywords.forEach(keyword => allKeywords.push(keyword));
+            }
+            
+            if (allKeywords.length === 0) {
+                alert('내보낼 키워드가 없습니다.');
+                return;
+            }
+            
+            const keywordsText = allKeywords.join('\\n');
+            
+            navigator.clipboard.writeText(keywordsText).then(() => {
+                const totalCount = savedExpandedKeywords.size + savedProductKeywords.size;
+                showCopyNotification(`전체 ${totalCount}개 키워드가 클립보드에 복사되었습니다!`);
+            }).catch(err => {
+                console.error('복사 실패:', err);
+                alert('클립보드 복사에 실패했습니다. 수동으로 복사해주세요:\\n\\n' + keywordsText);
+            });
+        }
+
+        // 전체 저장된 키워드 초기화
+        function clearAllSavedKeywords() {
+            if (savedExpandedKeywords.size === 0 && savedProductKeywords.size === 0) {
+                alert('초기화할 키워드가 없습니다.');
+                return;
+            }
+            
+            if (confirm('저장된 모든 키워드를 초기화하시겠습니까?')) {
+                savedExpandedKeywords.clear();
+                savedProductKeywords.clear();
+                updateSavedKeywordsDisplay();
+                showCopyNotification('모든 키워드가 초기화되었습니다.');
+            }
+        }
+
+        // 키워드 저장하고 탐지 시작 함수
+        function saveKeywordsAndStartDetection() {
+            const totalExpandedKeywords = savedExpandedKeywords.size;
+            const totalProductKeywords = savedProductKeywords.size;
+            const totalKeywords = totalExpandedKeywords + totalProductKeywords;
+            
+            if (totalKeywords === 0) {
+                alert('저장할 키워드가 없습니다. 먼저 키워드를 추가해주세요.');
+                return;
+            }
+            
+            // 키워드 저장 (실제로는 이미 저장되어 있으므로 확인 메시지만 표시)
+            const message = `확장된 키워드 ${totalKeywords}개로 게시글 탐지를 시작합니다. 탐지된 게시글을 분석하여 해당 상품추천이 필요하다고 판단되면 상품을 추천하겠습니다.`;
+            
+            // 성공 메시지 표시
+            showDetectionStartMessage(message);
+        }
+
+        // 탐지 시작 메시지 표시 함수 (더 긴 메시지를 위한 별도 함수)
+        function showDetectionStartMessage(message) {
+            // 기존 알림이 있으면 제거
+            const existingNotification = document.querySelector('.detection-notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+
+            // 새 알림 생성
+            const notification = document.createElement('div');
+            notification.className = 'detection-notification';
+            notification.innerHTML = `
+                <div class="notification-icon">🚀</div>
+                <div class="notification-text">${message}</div>
+            `;
+            document.body.appendChild(notification);
+
+            // 5초 후 제거 (긴 메시지이므로 더 오래 표시)
+            setTimeout(() => {
+                notification.classList.add('fade-out');
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+
+        // Enter 키로 키워드 추가
+        document.addEventListener('DOMContentLoaded', function() {
+            // 수동 타겟 키워드 입력
+            const manualTargetInput = document.getElementById('manualTargetKeywordInput');
+            if (manualTargetInput) {
+                manualTargetInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        addTargetKeyword();
+                    }
+                });
+            }
+            
+            // 상품 키워드 입력
+            const productInput = document.getElementById('productKeywordInput');
+            if (productInput) {
+                productInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        addProductKeyword();
+                    }
+                });
+            }
+            
+            // 페이지 로드 시 저장된 키워드 관리 영역 초기화
+            updateSavedKeywordsDisplay();
+        });
+
         function copyKeyword(keyword) {
             navigator.clipboard.writeText(keyword).then(() => {
                 showCopyNotification('키워드가 복사되었습니다!');
@@ -3419,6 +4162,300 @@
                     element.style.background = '';
                 }, 1500);
             });
+        }
+
+        // 게시글 분석 및 댓글 생성 관련 함수들
+        let analysisData = null; // 분석 결과 저장
+
+        function clearPostInput() {
+            document.getElementById('postTitle').value = '';
+            document.getElementById('postContent').value = '';
+            
+            // 결과 영역 초기화
+            document.getElementById('analysisResults').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📊</div>
+                    <div class="empty-text">게시글을 입력하고 분석 버튼을 눌러주세요</div>
+                </div>
+            `;
+            
+            document.getElementById('commentsResults').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">🤖</div>
+                    <div class="empty-text">먼저 게시글을 분석한 후 댓글 생성 버튼을 눌러주세요</div>
+                </div>
+            `;
+            
+            // 버튼 상태 초기화
+            const generateBtn = document.getElementById('generateCommentsBtn');
+            generateBtn.disabled = true;
+            generateBtn.style.opacity = '0.6';
+            generateBtn.style.cursor = 'not-allowed';
+            analysisData = null;
+        }
+
+        async function analyzePost() {
+            const title = document.getElementById('postTitle').value.trim();
+            const content = document.getElementById('postContent').value.trim();
+            
+            if (!title && !content) {
+                alert('게시글 제목 또는 본문을 입력해주세요.');
+                return;
+            }
+            
+            const analyzeBtn = document.getElementById('analyzePostBtn');
+            const loadingDiv = document.getElementById('postAnalysisLoading');
+            const loadingText = document.getElementById('loadingText');
+            
+            // 버튼 비활성화 및 로딩 표시
+            analyzeBtn.disabled = true;
+            analyzeBtn.textContent = '분석 중...';
+            loadingDiv.style.display = 'block';
+            loadingText.textContent = '게시글을 분석하고 있습니다...';
+            
+            try {
+                // 임시 분석 결과 (실제 API 연결 전까지 사용)
+                const mockAnalysisResult = generateMockAnalysis(title, content);
+                displayAnalysisResults(mockAnalysisResult);
+                
+                // 댓글 생성 버튼 활성화
+                const generateBtn = document.getElementById('generateCommentsBtn');
+                generateBtn.disabled = false;
+                generateBtn.style.opacity = '1';
+                generateBtn.style.cursor = 'pointer';
+                analysisData = mockAnalysisResult;
+                
+                showCopyNotification('게시글 분석이 완료되었습니다!');
+                
+                // 실제 API 호출 코드 (주석 해제하여 사용)
+                /*
+                const response = await fetch('/api/post/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: title,
+                        content: content
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayAnalysisResults(data);
+                    document.getElementById('generateCommentsBtn').disabled = false;
+                    analysisData = data;
+                    showCopyNotification('게시글 분석이 완료되었습니다!');
+                } else {
+                    showAnalysisError(data.message || '분석 중 오류가 발생했습니다.');
+                }
+                */
+                
+            } catch (error) {
+                console.error('분석 오류:', error);
+                showAnalysisError('분석 중 오류가 발생했습니다.');
+            } finally {
+                // 버튼 재활성화
+                analyzeBtn.disabled = false;
+                analyzeBtn.textContent = '🔍 게시글 분석';
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        async function generateComments() {
+            if (!analysisData) {
+                alert('먼저 게시글을 분석해주세요.');
+                return;
+            }
+            
+            const generateBtn = document.getElementById('generateCommentsBtn');
+            const loadingDiv = document.getElementById('postAnalysisLoading');
+            const loadingText = document.getElementById('loadingText');
+            
+            // 버튼 비활성화 및 로딩 표시
+            generateBtn.disabled = true;
+            generateBtn.textContent = '생성 중...';
+            loadingDiv.style.display = 'block';
+            loadingText.textContent = '댓글을 생성하고 있습니다...';
+            
+            try {
+                // 임시 댓글 생성 결과 (실제 API 연결 전까지 사용)
+                const mockCommentsResult = generateMockComments(analysisData);
+                displayCommentsResults(mockCommentsResult);
+                
+                showCopyNotification('댓글 생성이 완료되었습니다!');
+                
+                // 실제 API 호출 코드 (주석 해제하여 사용)
+                /*
+                const response = await fetch('/api/post/comments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        analysis: analysisData,
+                        styles: ["공감형", "질문형", "조언형", "친근형", "경험공유형"]
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayCommentsResults(data);
+                    showCopyNotification('댓글 생성이 완료되었습니다!');
+                } else {
+                    showCommentsError(data.message || '댓글 생성 중 오류가 발생했습니다.');
+                }
+                */
+                
+            } catch (error) {
+                console.error('댓글 생성 오류:', error);
+                showCommentsError('댓글 생성 중 오류가 발생했습니다.');
+            } finally {
+                // 버튼 재활성화
+                generateBtn.disabled = false;
+                generateBtn.textContent = '💬 댓글 자동생성';
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        function generateMockAnalysis(title, content) {
+            return {
+                sentiment: "고민/상담",
+                keywords: ["직장", "상사", "갈등", "스트레스", "이직"],
+                emotion: "불안, 스트레스",
+                topic: "직장 내 인간관계",
+                tone: "진솔하고 도움을 구하는 톤",
+                summary: "직장 상사와의 갈등으로 스트레스를 받고 있으며, 이직을 고려하고 있는 상황에서 조언을 구하는 게시글"
+            };
+        }
+
+        function generateMockComments(analysisData) {
+            return [
+                {
+                    style: "공감형",
+                    content: "정말 힘드시겠어요 ㅠㅠ 저도 비슷한 경험이 있어서 마음이 너무 아픕니다. 매일 그런 스트레스를 받으시면 정말 지치실 것 같아요."
+                },
+                {
+                    style: "조언형", 
+                    content: "우선 상황을 객관적으로 기록해두시는 것을 추천드려요. 언제 어떤 일이 있었는지 메모해두시면 나중에 도움이 될 수 있어요. 그리고 신뢰할 만한 동료나 선배에게 조언을 구해보시는 것도 좋을 것 같습니다."
+                },
+                {
+                    style: "질문형",
+                    content: "혹시 HR팀이나 상담 창구 같은 곳에 도움을 요청해보신 적은 있으신가요? 회사 내부적으로 해결할 수 있는 방법이 있을지도 모르거든요."
+                },
+                {
+                    style: "경험공유형",
+                    content: "저도 예전에 상사와 갈등이 있었는데, 결국 다른 부서로 이동하면서 해결됐어요. 이직도 하나의 방법이지만, 먼저 회사 내에서 다른 기회가 있는지 알아보시는 것도 좋을 것 같아요."
+                },
+                {
+                    style: "친근형",
+                    content: "힘내세요! 이런 상황이 계속되면 정말 지치실 텐데, 본인의 멘탈 건강이 가장 중요해요. 무리하지 마시고 주변 사람들과 많이 이야기 나누세요 💪"
+                }
+            ];
+        }
+
+        function displayAnalysisResults(data) {
+            const resultsContainer = document.getElementById('analysisResults');
+            
+            let html = '<div class="keyword-category">';
+            html += '<div class="category-header">';
+            html += '<h4>📊 분석 결과</h4>';
+            html += '</div>';
+            html += '<div class="keywords-list">';
+            
+            if (data.sentiment) {
+                html += `<div class="keyword-tag analysis-tag"><strong>감정:</strong> ${data.sentiment}</div>`;
+            }
+            
+            if (data.keywords && data.keywords.length > 0) {
+                html += `<div class="keyword-tag analysis-tag"><strong>키워드:</strong> ${data.keywords.join(', ')}</div>`;
+            }
+            
+            if (data.emotion) {
+                html += `<div class="keyword-tag analysis-tag"><strong>감정상태:</strong> ${data.emotion}</div>`;
+            }
+            
+            if (data.topic) {
+                html += `<div class="keyword-tag analysis-tag"><strong>주제:</strong> ${data.topic}</div>`;
+            }
+            
+            if (data.tone) {
+                html += `<div class="keyword-tag analysis-tag"><strong>톤:</strong> ${data.tone}</div>`;
+            }
+            
+            if (data.summary) {
+                html += `<div class="keyword-tag analysis-tag" style="width: 100%; white-space: normal;"><strong>요약:</strong> ${data.summary}</div>`;
+            }
+            
+            html += '</div></div>';
+            resultsContainer.innerHTML = html;
+        }
+
+        function displayCommentsResults(comments) {
+            const resultsContainer = document.getElementById('commentsResults');
+            
+            let html = '<div class="keyword-category">';
+            html += '<div class="category-header">';
+            html += '<h4>💬 생성된 댓글</h4>';
+            html += '</div>';
+            html += '<div class="keywords-list">';
+            
+            comments.forEach((comment, index) => {
+                html += `
+                    <div class="keyword-tag comment-tag" style="width: 100%; white-space: normal; position: relative; padding-right: 60px;">
+                        <div style="font-weight: 600; color: #4CAF50; margin-bottom: 0.3rem;">${comment.style}</div>
+                        <div style="line-height: 1.4;">${comment.content}</div>
+                        <button class="copy-btn" onclick="copyComment('${comment.content.replace(/'/g, "\\'")}', this)" 
+                                style="position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(255,255,255,0.2); border: none; color: white; padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">
+                            📋
+                        </button>
+                    </div>
+                `;
+            });
+            
+            html += '</div></div>';
+            resultsContainer.innerHTML = html;
+        }
+
+        function copyComment(content, element) {
+            navigator.clipboard.writeText(content).then(() => {
+                // 복사 완료 피드백
+                const originalText = element.innerHTML;
+                element.innerHTML = '✅';
+                element.style.background = '#4CAF50';
+                
+                setTimeout(() => {
+                    element.innerHTML = originalText;
+                    element.style.background = 'rgba(255,255,255,0.2)';
+                }, 1500);
+                
+                showCopyNotification('댓글이 복사되었습니다!');
+            }).catch(err => {
+                console.error('복사 실패:', err);
+                alert('복사에 실패했습니다.');
+            });
+        }
+
+        function showAnalysisError(message) {
+            const resultsContainer = document.getElementById('analysisResults');
+            resultsContainer.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">❌</div>
+                    <div class="empty-text">${message}</div>
+                </div>
+            `;
+        }
+
+        function showCommentsError(message) {
+            const resultsContainer = document.getElementById('commentsResults');
+            resultsContainer.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">❌</div>
+                    <div class="empty-text">${message}</div>
+                </div>
+            `;
         }
     </script>
 </body>

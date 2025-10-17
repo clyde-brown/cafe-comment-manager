@@ -48,13 +48,6 @@ async def expand_keywords(
 
     **반환값:**
     - 5가지 카테고리별로 분류된 확장 키워드
-      - 직설적 키워드
-      - 문제/니즈 기반 키워드
-      - 솔루션/혜택 키워드
-      - 롱테일 키워드
-      - 경쟁/대체 키워드
-    - 총 생성된 키워드 개수
-    - 처리 시간 및 성공 여부
     """
     logger.info(
         f"API 요청 수신: /keywords/expand (키워드: '{request.target_keyword}', 개수: {request.keyword_count})"
