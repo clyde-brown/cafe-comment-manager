@@ -2700,6 +2700,9 @@
                         <button type="button" id="generateCommentsBtn" class="expand-btn" onclick="generateComments()" disabled style="opacity: 0.6; cursor: not-allowed;">
                             💬 댓글 자동생성
                         </button>
+                        <button type="button" class="expand-btn" onclick="testDisplayAnalysisResults()" style="background: #ff9800; margin-left: 10px;">
+                            🧪 테스트
+                        </button>
                     </div>
 
                     <div class="loading" id="postAnalysisLoading" style="display: none;">
@@ -4167,6 +4170,21 @@
         // 게시글 분석 및 댓글 생성 관련 함수들
         let analysisData = null; // 분석 결과 저장
 
+        // 테스트 함수 - UI 업데이트 확인용
+        function testDisplayAnalysisResults() {
+            const testData = {
+                topic: "직장 상사와의 갈등 고민",
+                emotion: "스트레스, 불안, 도움 요청",
+                summary: "직장에서 상사와의 갈등으로 스트레스를 받고 있으며 이직을 고려하고 있는 상황",
+                comment_points: "감정적 지지, 경험 공유, 실질적 조언 제공",
+                comment_type: "공감",
+                product_type: ""
+            };
+            
+            console.log('테스트 함수 실행 - keyword-results-container 업데이트');
+            displayAnalysisResults(testData);
+        }
+
         function clearPostInput() {
             document.getElementById('postTitle').value = '';
             document.getElementById('postContent').value = '';
@@ -4214,43 +4232,53 @@
             loadingText.textContent = '게시글을 분석하고 있습니다...';
             
             try {
-                // 임시 분석 결과 (실제 API 연결 전까지 사용)
-                const mockAnalysisResult = generateMockAnalysis(title, content);
-                displayAnalysisResults(mockAnalysisResult);
-                
-                // 댓글 생성 버튼 활성화
-                const generateBtn = document.getElementById('generateCommentsBtn');
-                generateBtn.disabled = false;
-                generateBtn.style.opacity = '1';
-                generateBtn.style.cursor = 'pointer';
-                analysisData = mockAnalysisResult;
-                
-                showCopyNotification('게시글 분석이 완료되었습니다!');
-                
-                // 실제 API 호출 코드 (주석 해제하여 사용)
-                /*
-                const response = await fetch('/api/post/analyze', {
+                // 실제 API 호출
+                const response = await fetch('/api/post-analysis/analyze', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        title: title,
-                        content: content
+                        post_title: title,
+                        post_content: content
                     })
                 });
 
-                const data = await response.json();
+                // 응답 상태 확인
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('API 응답 오류:', response.status, errorData);
+                    showAnalysisError(errorData.detail || '서버 오류가 발생했습니다.');
+                    return;
+                }
 
-                if (data.success) {
-                    displayAnalysisResults(data);
-                    document.getElementById('generateCommentsBtn').disabled = false;
-                    analysisData = data;
+                const data = await response.json();
+                
+                // 디버깅을 위한 콘솔 로그
+                console.log('API 응답 전체:', data);
+                console.log('data.success:', data.success);
+                console.log('data.analysis:', data.analysis);
+
+                if (data.success && data.analysis) {
+                    console.log('분석 결과 표시 시작');
+                    console.log('분석 데이터 상세:', JSON.stringify(data.analysis, null, 2));
+                    
+                    // 결과 표시
+                    displayAnalysisResults(data.analysis);
+                    
+                    // 댓글 생성 버튼 활성화
+                    const generateBtn = document.getElementById('generateCommentsBtn');
+                    generateBtn.disabled = false;
+                    generateBtn.style.opacity = '1';
+                    generateBtn.style.cursor = 'pointer';
+                    analysisData = data.analysis;
+                    
                     showCopyNotification('게시글 분석이 완료되었습니다!');
                 } else {
+                    console.log('분석 실패 또는 데이터 없음');
+                    console.log('오류 메시지:', data.message);
                     showAnalysisError(data.message || '분석 중 오류가 발생했습니다.');
                 }
-                */
                 
             } catch (error) {
                 console.error('분석 오류:', error);
@@ -4280,34 +4308,30 @@
             loadingText.textContent = '댓글을 생성하고 있습니다...';
             
             try {
-                // 임시 댓글 생성 결과 (실제 API 연결 전까지 사용)
-                const mockCommentsResult = generateMockComments(analysisData);
-                displayCommentsResults(mockCommentsResult);
+                // 실제 API 호출
+                const title = document.getElementById('postTitle').value.trim();
+                const content = document.getElementById('postContent').value.trim();
                 
-                showCopyNotification('댓글 생성이 완료되었습니다!');
-                
-                // 실제 API 호출 코드 (주석 해제하여 사용)
-                /*
-                const response = await fetch('/api/post/comments', {
+                const response = await fetch('/api/post-analysis/generate-comments', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        analysis: analysisData,
-                        styles: ["공감형", "질문형", "조언형", "친근형", "경험공유형"]
+                        post_title: title,
+                        post_content: content,
+                        analysis: analysisData
                     })
                 });
 
                 const data = await response.json();
 
-                if (data.success) {
-                    displayCommentsResults(data);
+                if (data.success && data.comments) {
+                    displayCommentsResults(data.comments);
                     showCopyNotification('댓글 생성이 완료되었습니다!');
                 } else {
                     showCommentsError(data.message || '댓글 생성 중 오류가 발생했습니다.');
                 }
-                */
                 
             } catch (error) {
                 console.error('댓글 생성 오류:', error);
@@ -4357,40 +4381,83 @@
         }
 
         function displayAnalysisResults(data) {
-            const resultsContainer = document.getElementById('analysisResults');
+            console.log('=== displayAnalysisResults 시작 ===');
+            console.log('입력 데이터:', JSON.stringify(data, null, 2));
             
+            // 분석 결과 컨테이너 찾기
+            const analysisResultsContainer = document.getElementById('analysisResults');
+            console.log('analysisResults 컨테이너:', analysisResultsContainer);
+            
+            if (!analysisResultsContainer) {
+                console.error('analysisResults 컨테이너를 찾을 수 없습니다!');
+                return;
+            }
+            
+            // 분석 결과 섹션의 results-info를 정확히 찾기
+            const analysisResultsHeader = analysisResultsContainer.previousElementSibling;
+            const resultsInfo = analysisResultsHeader ? analysisResultsHeader.querySelector('.results-info') : null;
+            
+            console.log('analysisResultsHeader:', analysisResultsHeader);
+            console.log('resultsInfo:', resultsInfo);
+            
+            if (resultsInfo) {
+                const infoText = `✅ 주제: ${data.topic || '분석 중'} | 감정: ${data.emotion || '분석 중'} | 댓글유형: ${data.comment_type || '일반'}`;
+                resultsInfo.innerHTML = infoText;
+                console.log('results-info 업데이트 완료:', infoText);
+            } else {
+                console.log('results-info 요소를 찾을 수 없음');
+            }
+            
+            // HTML 생성
             let html = '<div class="keyword-category">';
             html += '<div class="category-header">';
             html += '<h4>📊 분석 결과</h4>';
             html += '</div>';
             html += '<div class="keywords-list">';
             
-            if (data.sentiment) {
-                html += `<div class="keyword-tag analysis-tag"><strong>감정:</strong> ${data.sentiment}</div>`;
-            }
+            console.log('각 필드 확인:');
+            console.log('- topic:', data.topic);
+            console.log('- emotion:', data.emotion);
+            console.log('- summary:', data.summary);
+            console.log('- comment_points:', data.comment_points);
+            console.log('- comment_type:', data.comment_type);
+            console.log('- product_type:', data.product_type);
             
-            if (data.keywords && data.keywords.length > 0) {
-                html += `<div class="keyword-tag analysis-tag"><strong>키워드:</strong> ${data.keywords.join(', ')}</div>`;
+            if (data.topic) {
+                html += `<div class="keyword-tag"><strong>주제:</strong> ${data.topic}</div>`;
             }
             
             if (data.emotion) {
-                html += `<div class="keyword-tag analysis-tag"><strong>감정상태:</strong> ${data.emotion}</div>`;
-            }
-            
-            if (data.topic) {
-                html += `<div class="keyword-tag analysis-tag"><strong>주제:</strong> ${data.topic}</div>`;
-            }
-            
-            if (data.tone) {
-                html += `<div class="keyword-tag analysis-tag"><strong>톤:</strong> ${data.tone}</div>`;
+                html += `<div class="keyword-tag"><strong>감정:</strong> ${data.emotion}</div>`;
             }
             
             if (data.summary) {
-                html += `<div class="keyword-tag analysis-tag" style="width: 100%; white-space: normal;"><strong>요약:</strong> ${data.summary}</div>`;
+                html += `<div class="keyword-tag" style="width: 100%; white-space: normal;"><strong>핵심내용:</strong> ${data.summary}</div>`;
+            }
+            
+            if (data.comment_points) {
+                html += `<div class="keyword-tag" style="width: 100%; white-space: normal;"><strong>댓글포인트:</strong> ${data.comment_points}</div>`;
+            }
+            
+            if (data.comment_type) {
+                html += `<div class="keyword-tag"><strong>필요댓글유형:</strong> ${data.comment_type}</div>`;
+            }
+            
+            if (data.product_type && data.product_type.trim()) {
+                html += `<div class="keyword-tag"><strong>상품추천유형:</strong> ${data.product_type}</div>`;
             }
             
             html += '</div></div>';
-            resultsContainer.innerHTML = html;
+            console.log('생성된 HTML 길이:', html.length);
+            console.log('생성된 HTML 미리보기:', html.substring(0, 200) + '...');
+            
+            // 컨테이너에 HTML 삽입
+            analysisResultsContainer.innerHTML = html;
+            console.log('HTML 삽입 완료');
+            
+            // 삽입 후 확인
+            console.log('삽입 후 컨테이너 내용:', analysisResultsContainer.innerHTML.substring(0, 200) + '...');
+            console.log('=== displayAnalysisResults 완료 ===');
         }
 
         function displayCommentsResults(comments) {
@@ -4405,7 +4472,7 @@
             comments.forEach((comment, index) => {
                 html += `
                     <div class="keyword-tag comment-tag" style="width: 100%; white-space: normal; position: relative; padding-right: 60px;">
-                        <div style="font-weight: 600; color: #4CAF50; margin-bottom: 0.3rem;">${comment.style}</div>
+                        <div style="font-weight: 600; color: #4CAF50; margin-bottom: 0.3rem;">${comment.icon} ${comment.style}</div>
                         <div style="line-height: 1.4;">${comment.content}</div>
                         <button class="copy-btn" onclick="copyComment('${comment.content.replace(/'/g, "\\'")}', this)" 
                                 style="position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(255,255,255,0.2); border: none; color: white; padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">
