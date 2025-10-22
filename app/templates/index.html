@@ -2590,10 +2590,22 @@
                 </div>
                 
                 <div class="product-keyword-input-container">
+                    <div class="input-group" style="margin-bottom: 1rem;">
+                        <label for="productKeywordInput" style="display: block; color: white; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">상품 키워드</label>
+                        <input type="text" id="productKeywordInput" placeholder="상품 키워드를 입력하세요 (예: 여름원피스, 시원한 소재)" class="keyword-input" />
+                    </div>
+                    <div class="input-group" style="margin-bottom: 1rem;">
+                        <label for="productFeatureInput" style="display: block; color: white; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">상품 특징</label>
+                        <textarea 
+                            id="productFeatureInput" 
+                            placeholder="상품의 특징을 입력하세요 (예: 통기성이 좋고 가벼운 소재, 세탁이 쉬움, 다양한 색상 옵션)"
+                            class="keyword-input"
+                            style="height: 48px; resize: vertical; line-height: 1.4; padding: 12px 16px;"
+                        ></textarea>
+                    </div>
                     <div class="input-group">
-                        <input type="text" id="productKeywordInput" placeholder="상품 키워드를 입력하세요 (예: 여름원피스, 시원한 소재)" />
-                        <button type="button" class="add-product-keyword-btn" onclick="addProductKeyword()">
-                            ➕ 추가
+                        <button type="button" class="add-product-keyword-btn" onclick="addProductKeyword()" style="width: 100%;">
+                            ➕ 상품 정보 추가
                         </button>
                     </div>
                 </div>
@@ -3939,25 +3951,39 @@
 
         // 상품 키워드 추가 함수
         function addProductKeyword() {
-            const input = document.getElementById('productKeywordInput');
-            const keyword = input.value.trim();
+            const keywordInput = document.getElementById('productKeywordInput');
+            const featureInput = document.getElementById('productFeatureInput');
+            const keyword = keywordInput.value.trim();
+            const feature = featureInput.value.trim();
             
             if (!keyword) {
                 alert('상품 키워드를 입력해주세요.');
-                input.focus();
+                keywordInput.focus();
                 return;
             }
             
-            if (savedProductKeywords.has(keyword)) {
+            // 키워드가 이미 존재하는지 확인 (키워드만으로 중복 체크)
+            const existingProduct = Array.from(savedProductKeywords).find(item => 
+                typeof item === 'object' ? item.keyword === keyword : item === keyword
+            );
+            
+            if (existingProduct) {
                 alert('이미 추가된 키워드입니다.');
-                input.focus();
+                keywordInput.focus();
                 return;
             }
             
-            savedProductKeywords.add(keyword);
-            input.value = '';
+            // 상품 정보 객체로 저장
+            const productInfo = {
+                keyword: keyword,
+                feature: feature || ''
+            };
+            
+            savedProductKeywords.add(productInfo);
+            keywordInput.value = '';
+            featureInput.value = '';
             updateSavedKeywordsDisplay();
-            showCopyNotification('상품 키워드가 추가되었습니다!');
+            showCopyNotification('상품 정보가 추가되었습니다!');
         }
 
         // 저장된 키워드 표시 업데이트
@@ -3990,13 +4016,28 @@
                 productContainer.innerHTML = '<div class="empty-keywords">저장된 상품 키워드가 없습니다.</div>';
             } else {
                 let html = '';
-                savedProductKeywords.forEach(keyword => {
-                    html += `
-                        <div class="saved-keyword-item product-keyword">
-                            ${keyword}
-                            <span class="remove-saved-btn" onclick="removeSavedKeyword('product', '${keyword.replace(/'/g, "\\'")}')">×</span>
-                        </div>
-                    `;
+                savedProductKeywords.forEach(item => {
+                    // 기존 문자열 형태와 새로운 객체 형태 모두 지원
+                    if (typeof item === 'object') {
+                        const safeKeyword = item.keyword.replace(/'/g, "\\'");
+                        html += `
+                            <div class="saved-keyword-item product-keyword" style="flex-direction: column; align-items: flex-start; padding: 0.8rem;">
+                                <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; margin-bottom: 0.5rem;">
+                                    <span style="font-weight: 700; color: white;">${item.keyword}</span>
+                                    <span class="remove-saved-btn" onclick="removeSavedProductKeyword('${safeKeyword}')">×</span>
+                                </div>
+                                ${item.feature ? `<div style="color: rgba(255,255,255,0.8); font-size: 0.85rem; line-height: 1.4;">${item.feature}</div>` : ''}
+                            </div>
+                        `;
+                    } else {
+                        // 기존 문자열 형태 (하위 호환성)
+                        html += `
+                            <div class="saved-keyword-item product-keyword">
+                                ${item}
+                                <span class="remove-saved-btn" onclick="removeSavedKeyword('product', '${item.replace(/'/g, "\\'")}')">×</span>
+                            </div>
+                        `;
+                    }
                 });
                 productContainer.innerHTML = html;
             }
@@ -4012,6 +4053,17 @@
             updateSavedKeywordsDisplay();
         }
 
+        // 상품 키워드 제거 (객체 형태)
+        function removeSavedProductKeyword(keyword) {
+            const itemToRemove = Array.from(savedProductKeywords).find(item => 
+                typeof item === 'object' ? item.keyword === keyword : item === keyword
+            );
+            if (itemToRemove) {
+                savedProductKeywords.delete(itemToRemove);
+                updateSavedKeywordsDisplay();
+            }
+        }
+
         // 전체 키워드 내보내기
         function exportAllKeywords() {
             const allKeywords = [];
@@ -4024,7 +4076,13 @@
             
             if (savedProductKeywords.size > 0) {
                 allKeywords.push('=== 상품 키워드 ===');
-                savedProductKeywords.forEach(keyword => allKeywords.push(keyword));
+                savedProductKeywords.forEach(item => {
+                    if (typeof item === 'object') {
+                        allKeywords.push(`${item.keyword}${item.feature ? ` (${item.feature})` : ''}`);
+                    } else {
+                        allKeywords.push(item);
+                    }
+                });
             }
             
             if (allKeywords.length === 0) {
@@ -4307,7 +4365,14 @@
                     generateBtn.disabled = false;
                     generateBtn.style.opacity = '1';
                     generateBtn.style.cursor = 'pointer';
-                    analysisData = data.analysis;
+                    
+                    // 전체 응답 데이터 저장 (댓글 생성에 필요)
+                    analysisData = {
+                        analysis: data.analysis,
+                        success: data.success,
+                        message: data.message
+                    };
+                    console.log('저장된 분석 데이터:', analysisData);
                     
                     showCopyNotification('게시글 분석이 완료되었습니다!');
                 } else {
@@ -4344,29 +4409,45 @@
             loadingText.textContent = '댓글을 생성하고 있습니다...';
             
             try {
-                // 실제 API 호출
-                const title = document.getElementById('postTitle').value.trim();
-                const content = document.getElementById('postContent').value.trim();
+                console.log('=== 댓글 생성 API 호출 시작 ===');
                 
-                const response = await fetch('/api/post-analysis/generate-comments', {
+                // 게시글 내용 가져오기
+                const content = document.getElementById('postContent').value.trim();
+                console.log('게시글 내용:', content);
+                console.log('분석 데이터:', analysisData);
+                
+                // API 요청 데이터 준비
+                const requestData = {
+                    post_content: content,
+                    post_analysis: analysisData.analysis
+                };
+                
+                console.log('API 요청 데이터:', requestData);
+                
+                // 새로운 댓글 생성 API 호출
+                const response = await fetch('/api/comments/generate', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        post_title: title,
-                        post_content: content,
-                        analysis: analysisData
-                    })
+                    body: JSON.stringify(requestData)
                 });
 
-                const data = await response.json();
+                console.log('API 응답 상태:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
 
-                if (data.success && data.comments) {
-                    displayCommentsResults(data.comments);
+                const data = await response.json();
+                console.log('API 응답 데이터:', data);
+
+                if (data.success && data.comments && data.comments.comments) {
+                    displayCommentsResults(data.comments.comments);
                     showCopyNotification('댓글 생성이 완료되었습니다!');
+                    console.log('댓글 생성 성공:', data.comments.comments.length + '개');
                 } else {
-                    showCommentsError(data.message || '댓글 생성 중 오류가 발생했습니다.');
+                    throw new Error(data.message || '댓글 생성에 실패했습니다.');
                 }
                 
             } catch (error) {
@@ -4528,21 +4609,64 @@
         }
 
         function displayCommentsResults(comments) {
+            console.log('=== displayCommentsResults 시작 ===');
+            console.log('댓글 데이터:', comments);
+            
             const resultsContainer = document.getElementById('commentsResults');
             
             let html = '<div class="keyword-category">';
             html += '<div class="category-header">';
             html += '<h4>💬 생성된 댓글</h4>';
+            html += `<span class="category-count">${comments.length}개</span>`;
             html += '</div>';
             html += '<div class="keywords-list">';
             
+            // 댓글 유형별 아이콘 매핑
+            const typeIcons = {
+                '공감형': '🤝',
+                '질문형': '❓',
+                '조언형': '💡',
+                '친근형': '😊',
+                '경험공유형': '📝',
+                '일반형': '💬',
+                // '-형' 제거된 버전도 지원
+                '공감': '🤝',
+                '질문': '❓',
+                '조언': '💡',
+                '친근': '😊',
+                '경험공유': '📝',
+                '일반': '💬'
+            };
+            
             comments.forEach((comment, index) => {
+                const icon = typeIcons[comment.type] || '💬';
+                const safeContent = comment.content.replace(/'/g, "\\'").replace(/"/g, '\\"');
+                
+                // '-형' 제거
+                const displayType = comment.type.replace(/형$/, '');
+                
+                // 댓글 유형별 색상 매핑
+                const typeColors = {
+                    '공감': '#FF6B6B',    // 빨간색 계열
+                    '질문': '#4ECDC4',    // 청록색 계열  
+                    '조언': '#45B7D1',    // 파란색 계열
+                    '친근': '#96CEB4',    // 초록색 계열
+                    '경험공유': '#FECA57', // 노란색 계열
+                    '일반': '#A8A8A8'     // 회색 계열
+                };
+                
+                const typeColor = typeColors[displayType] || '#4CAF50';
+                
                 html += `
-                    <div class="keyword-tag comment-tag" style="width: 100%; white-space: normal; position: relative; padding-right: 60px;">
-                        <div style="font-weight: 600; color: #4CAF50; margin-bottom: 0.3rem;">${comment.icon} ${comment.style}</div>
-                        <div style="line-height: 1.4;">${comment.content}</div>
-                        <button class="copy-btn" onclick="copyComment('${comment.content.replace(/'/g, "\\'")}', this)" 
-                                style="position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(255,255,255,0.2); border: none; color: white; padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">
+                    <div class="keyword-tag comment-tag" style="width: 100%; white-space: normal; position: relative; padding-right: 60px; margin-bottom: 0.8rem;">
+                        <div style="font-weight: 700; color: ${typeColor}; margin-bottom: 0.5rem; font-size: 1rem; text-shadow: 0 0 10px ${typeColor}40; background: linear-gradient(135deg, ${typeColor}20, ${typeColor}10); padding: 0.4rem 0.8rem; border-radius: 20px; border: 2px solid ${typeColor}60;">
+                            ${icon} ${displayType}
+                        </div>
+                        <div style="line-height: 1.5; color: rgba(255,255,255,0.9); padding: 0.3rem 0;">
+                            ${comment.content}
+                        </div>
+                        <button class="copy-btn" onclick="copyComment('${safeContent}', this)" 
+                                style="position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(255,255,255,0.2); border: none; color: white; padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.7rem; cursor: pointer; transition: all 0.2s;">
                             📋
                         </button>
                     </div>
@@ -4551,6 +4675,7 @@
             
             html += '</div></div>';
             resultsContainer.innerHTML = html;
+            console.log('=== displayCommentsResults 완료 ===');
         }
 
         function copyComment(content, element) {

@@ -71,15 +71,25 @@ class KeywordExpansionService:
     ) -> str:
         """키워드 확장 프롬프트 생성"""
         try:
-            # 외부 프롬프트 템플릿 사용
-            prompt = self.prompt_loader.format_prompt(
-                category="keyword_expansion",
-                prompt_name=prompt_type.value,
-                target_keyword=target_keyword,
-                keyword_count=keyword_count,
+            # 시스템 프롬프트와 유저 프롬프트 로드
+            system_prompt = self.prompt_loader.get_prompt_template(
+                category="keyword_expansion", prompt_name="system_prompt"
+            )
+            user_prompt = self.prompt_loader.get_prompt_template(
+                category="keyword_expansion", prompt_name="user_prompt"
             )
 
-            if prompt:
+            if system_prompt and user_prompt:
+                # 유저 프롬프트에 변수 치환
+                formatted_user_prompt = self.prompt_loader.format_prompt(
+                    "keyword_expansion",
+                    "user_prompt",
+                    target_keyword=target_keyword,
+                    keyword_count=keyword_count,
+                )
+
+                # 시스템 프롬프트와 유저 프롬프트 결합
+                prompt = f"{system_prompt}\n\n{formatted_user_prompt}"
                 logger.debug(f"외부 프롬프트 템플릿 사용: {prompt_type.value}")
                 return prompt
             else:

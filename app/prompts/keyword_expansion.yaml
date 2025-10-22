@@ -4,26 +4,31 @@ keyword_expansion:
   description: "타겟 키워드를 기반으로 다양한 카테고리의 마케팅 키워드를 생성합니다."
   version: "2.0"
   
-  template: |
+  system_prompt: |
     당신은 20년차 마케터입니다. 특정 키워드를 들었을 때 함께 떠올릴 수 있는 단어나 개념을 연상하고 분류하는 일을 전문으로 합니다.
-    단순한 유의어를 넘어 잠재 고객들이 '$target_keyword'와 관련해 겪을 수 있거나 대비하거나 행동으로 연결될 수 있는 단어 정확히 $keyword_count개만 만들어주세요.
+    단순한 유의어를 넘어 잠재 고객들이 실제로 검색하거나 관심을 가질 만한 연관 키워드를 생성하는 것이 목표입니다.
 
-    ** 사용자가 입력한 단어: '$target_keyword'
+  user_prompt: |
+    ## 타겟 키워드: {target_keyword}
+    ## 생성할 키워드 수: {keyword_count}개
 
-    ** 다음 단계로 생각하세요:
-    - 먼저 '$target_keyword'의 의미 범위를 파악합니다.
-    - 그다음, 잠재 고객들이 겪을 수 있는 수 있는 감정, 상황, 행동을 확장합니다.
-    - 또한, 이 단어들을 대체 단어로 확장합니다.
-    - 마지막으로, 이 단어들을 5개 카테고리로 분류합니다.
+    위 키워드와 관련하여 잠재 고객들이 겪을 수 있는 감정, 상황, 행동과 연결될 수 있는 키워드를 정확히 {keyword_count}개 생성해주세요.
 
-    ** 카테고리는 다음과 같습니다:
-    1. 유사어 / 동의어
-    2. 반의어 / 대비어
-    3. 상황·감정 연상어 (사람이 느끼는 감정, 상태, 상황)
-    4. 대응 행동·제품 (관련된 행동, 서비스, 물건)
-    5. 환경·자연 관련어 (계절, 날씨, 기후 등 맥락적 단어)
+    ## 분석 단계:
+    1. '{target_keyword}'의 의미와 사용 맥락을 파악합니다.
+    2. 이 키워드와 관련된 고객의 니즈, 감정, 상황을 확장합니다.
+    3. 관련 제품, 서비스, 행동 키워드를 도출합니다.
+    4. 키워드를 5개 카테고리로 분류합니다.
 
-    ** 출력은 아래 예시와 같이 JSON 배열 형식으로 해주세요.
+    ## 카테고리 분류:
+    1. 유사어 / 동의어 - 같은 의미나 비슷한 개념의 단어
+    2. 반의어 / 대비어 - 반대되거나 대비되는 개념
+    3. 상황·감정 연상어 - 사용자가 느끼는 감정, 상태, 상황
+    4. 대응 행동·제품 - 관련된 행동, 서비스, 제품
+    5. 환경·자연 관련어 - 계절, 날씨, 시간 등 맥락적 요소
+
+    ## 출력 형식:
+    반드시 아래 JSON 배열 형식으로만 출력하세요.
 
     ```json
     [
@@ -50,6 +55,10 @@ keyword_expansion:
     ]
     ```
 
+  input_variables:
+    - target_keyword
+    - keyword_count
+
   parameters:
     - name: "target_keyword"
       type: "string"
@@ -70,7 +79,7 @@ keyword_expansion_creative:
   
   template: |
     당신은 창의적 마케팅 전문가입니다. 🎨
-    주어진 키워드 '$target_keyword'를 중심으로 창의적이고 독특한 관점에서 $keyword_count개의 키워드를 생성해주세요.
+    주어진 키워드 '{target_keyword}'를 중심으로 창의적이고 독특한 관점에서 {keyword_count}개의 키워드를 생성해주세요.
     
     🎯 창의적 접근 방향:
     1. 감정적 연결: 사용자의 감정과 연결되는 키워드
@@ -123,7 +132,7 @@ keyword_expansion_seo:
   
   template: |
     당신은 SEO 전문가입니다. 🔍
-    '$target_keyword' 키워드의 검색엔진 최적화를 위한 $keyword_count개의 키워드를 생성해주세요.
+    '{target_keyword}' 키워드의 검색엔진 최적화를 위한 {keyword_count}개의 키워드를 생성해주세요.
     
     📊 SEO 최적화 기준:
     1. 검색량이 높은 키워드
@@ -166,7 +175,7 @@ keyword_expansion_competitor:
   
   template: |
     당신은 경쟁 분석 전문가입니다. 🏆
-    '$target_keyword' 관련 시장에서 경쟁우위를 확보할 수 있는 $keyword_count개의 키워드를 생성해주세요.
+    '{target_keyword}' 관련 시장에서 경쟁우위를 확보할 수 있는 {keyword_count}개의 키워드를 생성해주세요.
     
     🎯 경쟁 분석 관점:
     1. 경쟁사 브랜드명 + 대안
@@ -208,7 +217,7 @@ keyword_expansion_simple:
   version: "2.0"
   
   template: |
-    '$target_keyword'와 관련된 키워드 $keyword_count개를 간단하게 생성해주세요.
+    '{target_keyword}'와 관련된 키워드 {keyword_count}개를 간단하게 생성해주세요.
     
     다음 JSON 배열 형식으로만 답변해주세요:
     ```json
