@@ -34,3 +34,4 @@ class CommentGenerationResponse(BaseModel):
     message: str = Field(..., description="응답 메시지")
     comments: Optional[CommentGenerationResult] = Field(None, description="생성된 댓글")
     processing_time: float = Field(..., description="처리 시간 (초)")
+

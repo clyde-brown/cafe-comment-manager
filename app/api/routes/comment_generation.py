@@ -39,3 +39,4 @@ async def generate_comments(
 async def health_check():
     """댓글 생성 서비스 상태 확인"""
     return {"status": "healthy", "service": "comment_generation"}
+
