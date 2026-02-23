@@ -2801,6 +2801,22 @@
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
         
+        // 로그인 관련 전역 변수 초기화
+        if (typeof window.accountsData === 'undefined') {
+            window.accountsData = [];
+        }
+        if (typeof window.currentTaskId === 'undefined') {
+            window.currentTaskId = null;
+        }
+        if (typeof window.statusMonitoringInterval === 'undefined') {
+            window.statusMonitoringInterval = null;
+        }
+        
+        // 페이지 로드 시 로그인 상태 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeLoginState();
+        });
+        
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             uploadArea.addEventListener(eventName, preventDefaults, false);
             document.body.addEventListener(eventName, preventDefaults, false);
@@ -3107,9 +3123,32 @@
         function startStatusMonitoring() {
             if (!window.currentTaskId) return;
             
-            const interval = setInterval(async () => {
+            // 기존 모니터링 중단
+            if (window.statusMonitoringInterval) {
+                clearInterval(window.statusMonitoringInterval);
+                window.statusMonitoringInterval = null;
+            }
+            
+            window.statusMonitoringInterval = setInterval(async () => {
                 try {
+                    // 작업 ID가 없으면 모니터링 중단
+                    if (!window.currentTaskId) {
+                        clearInterval(window.statusMonitoringInterval);
+                        window.statusMonitoringInterval = null;
+                        return;
+                    }
+                    
                     const response = await fetch(`/api/login/status/${window.currentTaskId}`);
+                    
+                    // 404 에러는 작업이 존재하지 않음을 의미하므로 모니터링 중단
+                    if (response.status === 404) {
+                        clearInterval(window.statusMonitoringInterval);
+                        window.statusMonitoringInterval = null;
+                        window.currentTaskId = null;
+                        initializeLoginState();
+                        return;
+                    }
+                    
                     const status = await response.json();
                     
                     // 계정 상태 업데이트
@@ -3130,13 +3169,15 @@
                     
                     // 완료되면 모니터링 중단
                     if (!status.in_progress) {
-                        clearInterval(interval);
+                        clearInterval(window.statusMonitoringInterval);
+                        window.statusMonitoringInterval = null;
                         onBatchLoginComplete(status);
                     }
                     
                 } catch (error) {
                     console.error('상태 조회 오류:', error);
-                    clearInterval(interval);
+                    clearInterval(window.statusMonitoringInterval);
+                    window.statusMonitoringInterval = null;
                 }
             }, 2000); // 2초마다 상태 확인
         }
@@ -3182,6 +3223,52 @@
                 status.success_count > 0 ? 'success' : 'error'
             );
             window.currentTaskId = null;
+            
+            // 상태 모니터링 정리
+            if (window.statusMonitoringInterval) {
+                clearInterval(window.statusMonitoringInterval);
+                window.statusMonitoringInterval = null;
+            }
+        }
+        
+        // 페이지 로드 시 로그인 상태 초기화
+        function initializeLoginState() {
+            // 진행 중인 상태 모니터링 중단
+            if (window.statusMonitoringInterval) {
+                clearInterval(window.statusMonitoringInterval);
+                window.statusMonitoringInterval = null;
+            }
+            
+            // 작업 ID 초기화
+            window.currentTaskId = null;
+            
+            // 일괄 로그인 버튼 상태 초기화
+            const batchBtn = document.getElementById('batchLoginBtn');
+            if (batchBtn) {
+                batchBtn.disabled = false;
+                if (window.accountsData && window.accountsData.length > 0) {
+                    batchBtn.innerHTML = `🚀 전체 로그인 (${window.accountsData.length}개 계정)`;
+                } else {
+                    batchBtn.innerHTML = '🚀 전체 로그인';
+                }
+            }
+            
+            // 계정 데이터가 있고 상태가 loading인 경우 초기화
+            if (window.accountsData && Array.isArray(window.accountsData)) {
+                let hasChanges = false;
+                window.accountsData.forEach(account => {
+                    if (account.status === 'loading') {
+                        account.status = 'idle';
+                        account.error_message = null;
+                        hasChanges = true;
+                    }
+                });
+                
+                // 변경사항이 있으면 테이블 업데이트
+                if (hasChanges) {
+                    displayAccountsTable();
+                }
+            }
         }
         
         function showMessage(message, type = 'info') {

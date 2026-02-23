@@ -165,7 +165,10 @@ def _has_original_dunder_external(
             value_module = getmodule(value_type)
             if not value_module or not value_module.__name__:
                 return False
-            if value_module.__name__.startswith(member_type.__name__):
+            if (
+                value_module.__name__ == member_type.__name__
+                or value_module.__name__.startswith(member_type.__name__ + ".")
+            ):
                 return True
         if method_name == "__getattribute__":
             # we have to short-circuit here due to an unresolved issue in
@@ -176,6 +179,18 @@ def _has_original_dunder_external(
             member_method = getattr(member_type, method_name, None)
             if member_method == method:
                 return True
+        if isinstance(member_type, ModuleType):
+            method = getattr(value_type, method_name, None)
+            for base_class in value_type.__mro__[1:]:
+                base_module = getmodule(base_class)
+                if base_module and (
+                    base_module.__name__ == member_type.__name__
+                    or base_module.__name__.startswith(member_type.__name__ + ".")
+                ):
+                    # Check if the method comes from this trusted base class
+                    base_method = getattr(base_class, method_name, None)
+                    if base_method is not None and base_method == method:
+                        return True
     except (AttributeError, KeyError):
         return False
 
@@ -381,6 +396,10 @@ class EvaluationContext:
     policy_overrides: dict = field(default_factory=dict)
     #: Transient local namespace used to store mocks
     transient_locals: dict = field(default_factory=dict)
+    #: Transients of class level
+    class_transients: dict | None = None
+    #: Instance variable name used in the method definition
+    instance_arg_name: str | None = None
 
     def replace(self, /, **changes):
         """Return a new copy of the context, with specified changes"""
@@ -545,6 +564,8 @@ def _validate_policy_overrides(
 def _handle_assign(node: ast.Assign, context: EvaluationContext):
     value = eval_node(node.value, context)
     transient_locals = context.transient_locals
+    policy = get_policy(context)
+    class_transients = context.class_transients
     for target in node.targets:
         if isinstance(target, (ast.Tuple, ast.List)):
             # Handle unpacking assignment
@@ -557,20 +578,81 @@ def _handle_assign(node: ast.Assign, context: EvaluationContext):
 
             # Before starred
             for i in range(star_or_last_idx):
-                transient_locals[targets[i].id] = values[i]
+                # Check for self.x assignment
+                if _is_instance_attribute_assignment(targets[i], context):
+                    class_transients[targets[i].attr] = values[i]
+                else:
+                    transient_locals[targets[i].id] = values[i]
 
             # Starred if exists
             if starred:
                 end = len(values) - (len(targets) - star_or_last_idx - 1)
-                transient_locals[targets[star_or_last_idx].value.id] = values[
-                    star_or_last_idx:end
-                ]
+                if _is_instance_attribute_assignment(
+                    targets[star_or_last_idx], context
+                ):
+                    class_transients[targets[star_or_last_idx].attr] = values[
+                        star_or_last_idx:end
+                    ]
+                else:
+                    transient_locals[targets[star_or_last_idx].value.id] = values[
+                        star_or_last_idx:end
+                    ]
 
                 # After starred
                 for i in range(star_or_last_idx + 1, len(targets)):
-                    transient_locals[targets[i].id] = values[
-                        len(values) - (len(targets) - i)
-                    ]
+                    if _is_instance_attribute_assignment(targets[i], context):
+                        class_transients[targets[i].attr] = values[
+                            len(values) - (len(targets) - i)
+                        ]
+                    else:
+                        transient_locals[targets[i].id] = values[
+                            len(values) - (len(targets) - i)
+                        ]
+        elif isinstance(target, ast.Subscript):
+            if isinstance(target.value, ast.Name):
+                name = target.value.id
+                container = transient_locals.get(name)
+                if container is None:
+                    container = context.locals.get(name)
+                if container is None:
+                    container = context.globals.get(name)
+                if container is None:
+                    raise NameError(
+                        f"{name} not found in locals, globals, nor builtins"
+                    )
+                storage_dict = transient_locals
+                storage_key = name
+            elif isinstance(
+                target.value, ast.Attribute
+            ) and _is_instance_attribute_assignment(target.value, context):
+                attr = target.value.attr
+                container = class_transients.get(attr, None)
+                if container is None:
+                    raise NameError(f"{attr} not found in class transients")
+                storage_dict = class_transients
+                storage_key = attr
+            else:
+                return
+
+            key = eval_node(target.slice, context)
+            attributes = (
+                dict.fromkeys(dir(container))
+                if policy.can_call(container.__dir__)
+                else {}
+            )
+            items = {}
+
+            if policy.can_get_item(container, None):
+                try:
+                    items = dict(container.items())
+                except Exception:
+                    pass
+
+            items[key] = value
+            duck_container = _Duck(attributes=attributes, items=items)
+            storage_dict[storage_key] = duck_container
+        elif _is_instance_attribute_assignment(target, context):
+            class_transients[target.attr] = value
         else:
             transient_locals[target.id] = value
     return None
@@ -588,6 +670,30 @@ def _extract_args_and_kwargs(node: ast.Call, context: EvaluationContext):
         ).items()
     }
     return args, kwargs
+
+
+def _is_instance_attribute_assignment(
+    target: ast.AST, context: EvaluationContext
+) -> bool:
+    """Return True if target is an attribute access on the instance argument."""
+    return (
+        context.class_transients is not None
+        and context.instance_arg_name is not None
+        and isinstance(target, ast.Attribute)
+        and isinstance(getattr(target, "value", None), ast.Name)
+        and getattr(target.value, "id", None) == context.instance_arg_name
+    )
+
+
+def _get_coroutine_attributes() -> dict[str, Optional[object]]:
+    async def _dummy():
+        return None
+
+    coro = _dummy()
+    try:
+        return {attr: getattr(coro, attr, None) for attr in dir(coro)}
+    finally:
+        coro.close()
 
 
 def eval_node(node: Union[ast.AST, None], context: EvaluationContext):
@@ -626,10 +732,13 @@ def eval_node(node: Union[ast.AST, None], context: EvaluationContext):
         for child_node in node.body:
             result = eval_node(child_node, context)
         return result
-    if isinstance(node, ast.FunctionDef):
-        # we ignore body and only extract the return type
+    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+        is_async = isinstance(node, ast.AsyncFunctionDef)
+        func_locals = context.transient_locals.copy()
+        func_context = context.replace(transient_locals=func_locals)
         is_property = False
-
+        is_static = False
+        is_classmethod = False
         for decorator_node in node.decorator_list:
             try:
                 decorator = eval_node(decorator_node, context)
@@ -639,42 +748,165 @@ def eval_node(node: Union[ast.AST, None], context: EvaluationContext):
                 continue
             if decorator is property:
                 is_property = True
+            elif decorator is staticmethod:
+                is_static = True
+            elif decorator is classmethod:
+                is_classmethod = True
+
+        if func_context.class_transients is not None:
+            if not is_static and not is_classmethod:
+                func_context.instance_arg_name = (
+                    node.args.args[0].arg if node.args.args else None
+                )
 
         return_type = eval_node(node.returns, context=context)
 
+        for child_node in node.body:
+            eval_node(child_node, func_context)
+
         if is_property:
-            context.transient_locals[node.name] = _resolve_annotation(
-                return_type, context
-            )
+            if return_type is not None:
+                context.transient_locals[node.name] = _resolve_annotation(
+                    return_type, context
+                )
+            else:
+                return_value = _infer_return_value(node, func_context)
+                context.transient_locals[node.name] = return_value
+
             return None
 
         def dummy_function(*args, **kwargs):
             pass
 
-        dummy_function.__annotations__["return"] = return_type
+        if return_type is not None:
+            dummy_function.__annotations__["return"] = return_type
+        else:
+            inferred_return = _infer_return_value(node, func_context)
+            if inferred_return is not None:
+                dummy_function.__inferred_return__ = inferred_return
+
         dummy_function.__name__ = node.name
         dummy_function.__node__ = node
+        dummy_function.__is_async__ = is_async
         context.transient_locals[node.name] = dummy_function
         return None
+    if isinstance(node, ast.Lambda):
+
+        def dummy_function(*args, **kwargs):
+            pass
+
+        dummy_function.__inferred_return__ = eval_node(node.body, context)
+        return dummy_function
     if isinstance(node, ast.ClassDef):
         # TODO support class decorators?
         class_locals = {}
-        class_context = context.replace(transient_locals=class_locals)
+        outer_locals = context.locals.copy()
+        outer_locals.update(context.transient_locals)
+        class_context = context.replace(
+            transient_locals=class_locals, locals=outer_locals
+        )
+        class_context.class_transients = class_locals
         for child_node in node.body:
             eval_node(child_node, class_context)
         bases = tuple([eval_node(base, context) for base in node.bases])
         dummy_class = type(node.name, bases, class_locals)
         context.transient_locals[node.name] = dummy_class
         return None
+    if isinstance(node, ast.Await):
+        value = eval_node(node.value, context)
+        if hasattr(value, "__awaited_type__"):
+            return value.__awaited_type__
+        return value
+    if isinstance(node, ast.While):
+        loop_locals = context.transient_locals.copy()
+        loop_context = context.replace(transient_locals=loop_locals)
+
+        result = None
+        for stmt in node.body:
+            result = eval_node(stmt, loop_context)
+
+        policy = get_policy(context)
+        merged_locals = _merge_dicts_by_key(
+            [loop_locals, context.transient_locals.copy()], policy
+        )
+        context.transient_locals.update(merged_locals)
+
+        return result
+    if isinstance(node, ast.For):
+        try:
+            iterable = eval_node(node.iter, context)
+        except Exception:
+            iterable = None
+
+        sample = None
+        if iterable is not None:
+            try:
+                if policy.can_call(getattr(iterable, "__iter__", None)):
+                    sample = next(iter(iterable))
+            except Exception:
+                sample = None
+
+        loop_locals = context.transient_locals.copy()
+        loop_context = context.replace(transient_locals=loop_locals)
+
+        if sample is not None:
+            try:
+                fake_assign = ast.Assign(
+                    targets=[node.target], value=ast.Constant(value=sample)
+                )
+                _handle_assign(fake_assign, loop_context)
+            except Exception:
+                pass
+
+        result = None
+        for stmt in node.body:
+            result = eval_node(stmt, loop_context)
+
+        policy = get_policy(context)
+        merged_locals = _merge_dicts_by_key(
+            [loop_locals, context.transient_locals.copy()], policy
+        )
+        context.transient_locals.update(merged_locals)
+
+        return result
+    if isinstance(node, ast.If):
+        branches = []
+        current = node
+        result = None
+        while True:
+            branch_locals = context.transient_locals.copy()
+            branch_context = context.replace(transient_locals=branch_locals)
+            for stmt in current.body:
+                result = eval_node(stmt, branch_context)
+            branches.append(branch_locals)
+            if not current.orelse:
+                break
+            elif len(current.orelse) == 1 and isinstance(current.orelse[0], ast.If):
+                # It's an elif - continue loop
+                current = current.orelse[0]
+            else:
+                # It's an else block - process and break
+                else_locals = context.transient_locals.copy()
+                else_context = context.replace(transient_locals=else_locals)
+                for stmt in current.orelse:
+                    result = eval_node(stmt, else_context)
+                branches.append(else_locals)
+                break
+        branches.append(context.transient_locals.copy())
+        policy = get_policy(context)
+        merged_locals = _merge_dicts_by_key(branches, policy)
+        context.transient_locals.update(merged_locals)
+        return result
     if isinstance(node, ast.Assign):
         return _handle_assign(node, context)
     if isinstance(node, ast.AnnAssign):
-        if not node.simple:
-            # for now only handle simple annotations
-            return None
-        context.transient_locals[node.target.id] = _resolve_annotation(
-            eval_node(node.annotation, context), context
-        )
+        if node.simple:
+            value = _resolve_annotation(eval_node(node.annotation, context), context)
+            context.transient_locals[node.target.id] = value
+        # Handle non-simple annotated assignments only for self.x: type = value
+        if _is_instance_attribute_assignment(node.target, context):
+            value = _resolve_annotation(eval_node(node.annotation, context), context)
+            context.class_transients[node.target.attr] = value
         return None
     if isinstance(node, ast.Expression):
         return eval_node(node.body, context)
@@ -792,6 +1024,12 @@ def eval_node(node: Union[ast.AST, None], context: EvaluationContext):
     if isinstance(node, ast.Name):
         return _eval_node_name(node.id, context)
     if isinstance(node, ast.Attribute):
+        if (
+            context.class_transients is not None
+            and isinstance(node.value, ast.Name)
+            and node.value.id == context.instance_arg_name
+        ):
+            return context.class_transients.get(node.attr)
         value = eval_node(node.value, context)
         if policy.can_get_attr(value, node.attr):
             return getattr(value, node.attr)
@@ -821,7 +1059,17 @@ def eval_node(node: Union[ast.AST, None], context: EvaluationContext):
                 return overridden_return_type
             return _create_duck_for_heap_type(func)
         else:
+            inferred_return = getattr(func, "__inferred_return__", NOT_EVALUATED)
             return_type = _eval_return_type(func, node, context)
+            if getattr(func, "__is_async__", False):
+                awaited_type = (
+                    inferred_return if inferred_return is not None else return_type
+                )
+                coroutine_duck = _Duck(attributes=_get_coroutine_attributes())
+                coroutine_duck.__awaited_type__ = awaited_type
+                return coroutine_duck
+            if inferred_return is not NOT_EVALUATED:
+                return inferred_return
             if return_type is not NOT_EVALUATED:
                 return return_type
         raise GuardRejection(
@@ -836,6 +1084,119 @@ def eval_node(node: Union[ast.AST, None], context: EvaluationContext):
             return eval_node(node.msg, context)
         return eval_node(node.test, context)
     return None
+
+
+def _merge_dicts_by_key(dicts: list, policy: EvaluationPolicy):
+    """Merge multiple dictionaries, combining values for each key."""
+    if len(dicts) == 1:
+        return dicts[0]
+
+    all_keys = set()
+    for d in dicts:
+        all_keys.update(d.keys())
+
+    merged = {}
+    for key in all_keys:
+        values = [d[key] for d in dicts if key in d]
+        if values:
+            merged[key] = _merge_values(values, policy)
+
+    return merged
+
+
+def _merge_values(values, policy: EvaluationPolicy):
+    """Recursively merge multiple values, combining attributes and dict items."""
+    if len(values) == 1:
+        return values[0]
+
+    types = {type(v) for v in values}
+    merged_items = None
+    key_values = {}
+    attributes = set()
+    for v in values:
+        if policy.can_call(v.__dir__):
+            attributes.update(dir(v))
+        try:
+            if policy.can_call(v.items):
+                try:
+                    for k, val in v.items():
+                        key_values.setdefault(k, []).append(val)
+                except Exception as e:
+                    pass
+            elif policy.can_call(v.keys):
+                try:
+                    for k in v.keys():
+                        key_values.setdefault(k, []).append(None)
+                except Exception as e:
+                    pass
+        except Exception as e:
+            pass
+
+    if key_values:
+        merged_items = {
+            k: _merge_values(vals, policy) if vals[0] is not None else None
+            for k, vals in key_values.items()
+        }
+
+    if len(types) == 1:
+        t = next(iter(types))
+        if t not in (dict,) and not (
+            hasattr(next(iter(values)), "__getitem__")
+            and (
+                hasattr(next(iter(values)), "items")
+                or hasattr(next(iter(values)), "keys")
+            )
+        ):
+            if t in (list, set, tuple):
+                return t
+            return values[0]
+
+    return _Duck(attributes=dict.fromkeys(attributes), items=merged_items)
+
+
+def _infer_return_value(node: ast.FunctionDef, context: EvaluationContext):
+    """Infer the return value(s) of a function by evaluating all return statements."""
+    return_values = _collect_return_values(node.body, context)
+
+    if not return_values:
+        return None
+    if len(return_values) == 1:
+        return return_values[0]
+
+    policy = get_policy(context)
+    return _merge_values(return_values, policy)
+
+
+def _collect_return_values(body, context):
+    """Recursively collect return values from a list of AST statements."""
+    return_values = []
+    for stmt in body:
+        if isinstance(stmt, ast.Return):
+            if stmt.value is None:
+                continue
+            try:
+                value = eval_node(stmt.value, context)
+                if value is not None and value is not NOT_EVALUATED:
+                    return_values.append(value)
+            except Exception:
+                pass
+        if isinstance(
+            stmt, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda)
+        ):
+            continue
+        elif hasattr(stmt, "body") and isinstance(stmt.body, list):
+            return_values.extend(_collect_return_values(stmt.body, context))
+        if isinstance(stmt, ast.Try):
+            for h in stmt.handlers:
+                if hasattr(h, "body"):
+                    return_values.extend(_collect_return_values(h.body, context))
+            if hasattr(stmt, "orelse"):
+                return_values.extend(_collect_return_values(stmt.orelse, context))
+            if hasattr(stmt, "finalbody"):
+                return_values.extend(_collect_return_values(stmt.finalbody, context))
+        if hasattr(stmt, "orelse") and isinstance(stmt.orelse, list):
+            return_values.extend(_collect_return_values(stmt.orelse, context))
+    return return_values
 
 
 def _eval_return_type(func: Callable, node: ast.Call, context: EvaluationContext):
@@ -1063,46 +1424,69 @@ set_non_mutating_methods = set(dir(set)) & set(dir(frozenset))
 
 
 dict_keys: type[collections.abc.KeysView] = type({}.keys())
+dict_values: type = type({}.values())
+dict_items: type = type({}.items())
 
 NUMERICS = {int, float, complex}
 
 ALLOWED_CALLS = {
     bytes,
     *_list_methods(bytes),
+    bytes.__iter__,
     dict,
     *_list_methods(dict, dict_non_mutating_methods),
+    dict.__iter__,
+    dict_keys.__iter__,
+    dict_values.__iter__,
+    dict_items.__iter__,
     dict_keys.isdisjoint,
     list,
     *_list_methods(list, list_non_mutating_methods),
+    list.__iter__,
     set,
     *_list_methods(set, set_non_mutating_methods),
+    set.__iter__,
     frozenset,
     *_list_methods(frozenset),
+    frozenset.__iter__,
     range,
+    range.__iter__,
     str,
     *_list_methods(str),
+    str.__iter__,
     tuple,
     *_list_methods(tuple),
+    tuple.__iter__,
     bool,
     *_list_methods(bool),
     *NUMERICS,
     *[method for numeric_cls in NUMERICS for method in _list_methods(numeric_cls)],
     collections.deque,
     *_list_methods(collections.deque, list_non_mutating_methods),
+    collections.deque.__iter__,
     collections.defaultdict,
     *_list_methods(collections.defaultdict, dict_non_mutating_methods),
+    collections.defaultdict.__iter__,
     collections.OrderedDict,
     *_list_methods(collections.OrderedDict, dict_non_mutating_methods),
+    collections.OrderedDict.__iter__,
     collections.UserDict,
     *_list_methods(collections.UserDict, dict_non_mutating_methods),
+    collections.UserDict.__iter__,
     collections.UserList,
     *_list_methods(collections.UserList, list_non_mutating_methods),
+    collections.UserList.__iter__,
     collections.UserString,
     *_list_methods(collections.UserString, dir(str)),
+    collections.UserString.__iter__,
     collections.Counter,
     *_list_methods(collections.Counter, dict_non_mutating_methods),
+    collections.Counter.__iter__,
     collections.Counter.elements,
     collections.Counter.most_common,
+    object.__dir__,
+    type.__dir__,
+    _Duck.__dir__,
 }
 
 BUILTIN_GETATTR: set[MayHaveGetattr] = {
